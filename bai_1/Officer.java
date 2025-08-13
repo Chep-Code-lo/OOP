@@ -13,15 +13,15 @@ public abstract class Officer{
         this.address = address;
     }
 
-    public String get_name() {return name;}
-    public int get_age() {return age;}
-    public String get_gender() {return gender;}
-    public String get_address() {return address;}
+    public String getName() {return name;}
+    public int getAge() {return age;}
+    public String getGender() {return gender;}
+    public String getAddress() {return address;}
 
-    public void set_name (String name){this.name = name;}
-    public void set_age (int age) {this.age = age;}
-    public void set_gender (String gender) {this.gender = gender;}
-    public void set_address (String address) {this.address = address;}
+    public void setName (String name){this.name = name;}
+    public void setAge (int age) {this.age = age;}
+    public void setGender (String gender) {this.gender = gender;}
+    public void setAddress (String address) {this.address = address;}
 
     @Override
     public String toString(){

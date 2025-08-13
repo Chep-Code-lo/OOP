@@ -7,8 +7,8 @@ public class Staff extends Officer{
         this.job = job;
     }
 
-    public String get_job() {return job;}
-    public void set_job(String job) {this.job = job;}
+    public String getJob() {return job;}
+    public void setJob(String job) {this.job = job;}
     
     @Override
     public String toString(){

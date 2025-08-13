@@ -12,7 +12,7 @@ public class Manage{
         String kw = key_word.toLowerCase();
         List<Officer>ans = new ArrayList<>();
         for(Officer x : List_new){
-            if(x.get_name().toLowerCase().contains(kw)){
+            if(x.getName().toLowerCase().contains(kw)){
                 ans.add(x);
             }
         }

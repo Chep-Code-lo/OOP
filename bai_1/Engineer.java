@@ -7,8 +7,8 @@ public class Engineer extends Officer{
         this.industry = industry;
     }
 
-    public String get_industry() {return industry;}
-    public void set_industry(String industry) {this.industry = industry;}
+    public String getIndustry() {return industry;}
+    public void setIndustry(String industry) {this.industry = industry;}
 
     @Override
     public String toString(){
