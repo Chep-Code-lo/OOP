@@ -1,14 +1,36 @@
 {
-  "version": "0.2.0",
   "configurations": [
     {
-      "type": "java",
-      "name": "Run Main in external CMD",
+      "name": "(Windows) Launch",
+      "type": "cppvsdbg",
       "request": "launch",
-      "mainClass": "bai_1.Main",
+      "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
       "console": "externalTerminal",
-      "vmArgs": "-Dfile.encoding=UTF-8",
-      "cwd": "${workspaceFolder}"
+      "preLaunchTask": "C/C++: g++.exe build active file"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "e:/LUYEN_CODE",
+      "program": "e:/LUYEN_CODE/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
     }
-  ]
+  ],
+  "version": "2.0.0"
 }
