@@ -14,14 +14,19 @@ double distance(point &a, point &b){
 }
 //Tìm điểm đối xứng qua gốc tọa độ
 point reflection_origin(const point &d){
+    if(d.x == 0 && d.y != 0) return {0, -d.y};
+    if(d.y == 0 && d.x != 0) return {-d.x, 0};
+    if(d.x == 0 && d.y == 0) return {0, 0};
     return {-d.x, -d.y};
 }
 //Tìm điểm đối xứng qua Ox
 point reflection_x_axis(const point &d){
+    if(d.y == 0) return {d.x, 0};
     return {d.x, -d.y};
 }
 //Tìm điểm đối xứng qua Oy
 point reflection_y_axis(const point &d){
+    if(d.x == 0) return {0, d.y};
     return {-d.x, d.y};
 }
 //Nhập tọa độ 
@@ -123,24 +128,36 @@ int main(){
             }
             //Kiểm tra thao tác và xử lý
             else if(choose == 4){
+                //Kiểm tra nếu input chưa được nhập thì yêu cầu chọn thao tác nhập lại
+    			if(!has_input){
+    				cout << "Chưa có tọa độ được nhập! Hãy chọn 1 để nhập!\n";
+                    pause_enter();//Dừng tạm thời
+    				continue;//Quay lại vòng lặp để nhập lại
+    			}
                 cout << "Điểm đối xứng qua gốc tọa độ là: "; 
                 print(reflection_origin(first));//In ra giá trị thao tác
                 pause_enter();//Dừng tạm thời
             }
             //Kiểm tra thao tác và xử lý
             else if(choose == 5){
-                cout << "Điểm đối xứng qua trục Ox là: "; 
-                print(reflection_x_axis(first));//In ra giá trị thao tác
-                pause_enter();//Dừng tạm thời
-            }
-            //Kiểm tra thao tác và xử lý
-            else if(choose == 5){
+                //Kiểm tra nếu input chưa được nhập thì yêu cầu chọn thao tác nhập lại
+    			if(!has_input){
+    				cout << "Chưa có tọa độ được nhập! Hãy chọn 1 để nhập!\n";
+                    pause_enter();//Dừng tạm thời
+    				continue;//Quay lại vòng lặp để nhập lại
+    			}
                 cout << "Điểm đối xứng qua trục Ox là: "; 
                 print(reflection_x_axis(first));//In ra giá trị thao tác
                 pause_enter();//Dừng tạm thời
             }
             //Kiểm tra thao tác và xử lý
             else if(choose == 6){
+                //Kiểm tra nếu input chưa được nhập thì yêu cầu chọn thao tác nhập lại
+    			if(!has_input){
+    				cout << "Chưa có tọa độ được nhập! Hãy chọn 1 để nhập!\n";
+                    pause_enter();//Dừng tạm thời
+    				continue;//Quay lại vòng lặp để nhập lại
+    			}
                 cout << "Điểm đối xứng qua trục Oy là: "; 
                 print(reflection_y_axis(first));//In ra giá trị thao tác
                 pause_enter();//Dừng tạm thời

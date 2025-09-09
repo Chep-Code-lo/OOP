@@ -1,0 +1,5 @@
+2025-09-06 21:56:21.366763300 INFO  [Main] CWD  = d:\OOP\project
+2025-09-06 21:56:21.385782 INFO  [Main] CSV  = d:\OOP\project\data\books.csv
+2025-09-06 21:56:21.387788700 INFO  [CsvUtil] Reading CSV: d:\OOP\project\data\books.csv
+2025-09-06 21:56:21.399806400 INFO  [CsvUtil] Parsed 100 rows
+2025-09-06 21:56:21.399806400 INFO  [Main] Loaded 100 books

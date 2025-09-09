@@ -1,5 +1,4 @@
 package bai_1;
-
 public abstract class Officer{
     private String name;
     private int age;

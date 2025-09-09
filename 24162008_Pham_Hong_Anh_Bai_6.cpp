@@ -163,11 +163,11 @@ string normalize_sex(student &s){
 //In ra thông tin danh sách sinh viên dạng đẹp
 void print(vector<student> &s){
     vector<student>add_list;
-    for(int i=0; i<s.size(); ++i){
+    for(size_t i=0; i<s.size(); ++i){
         student temp = s[i];
         add_list.push_back({temp.student_code, normalize_name(temp.name), normalize_sex(temp), temp.point});
     }
-    for(int i=0; i<add_list.size(); ++i)
+    for(size_t i=0; i<add_list.size(); ++i)
         add_list[i].output();
 }
 //Kiểm tra sinh viên có qua môn hay không
@@ -178,10 +178,10 @@ bool check_pass(student &s){
         return false;
 }
 //In ra thông tin danh sách sinh viên đã qua môn
-int count_pass; //Biến cục bộ để đếm số lượng sinh viên qua môn
-vector<student>add_pass;//Biến cục bộ lưu danh sách qua môn
+int count_pass; //Biến toàn cục để đếm số lượng sinh viên qua môn
+vector<student>add_pass;//Biến toàn cục lưu danh sách qua môn
 void check_pass(vector<student> &s){
-    for(int i = 0; i < s.size(); ++i){
+    for(size_t i = 0; i < s.size(); ++i){
         student temp = s[i];
         if(check_pass(temp)){
             count_pass++;
@@ -212,31 +212,31 @@ string rank_student(student &s){
 //In ra bảng xếp loại sinh viên
 vector<student_rank> add_rank;
 void make_rank(vector<student> &s){
-    for(int i = 0; i < s.size(); ++i){
+    for(size_t i = 0; i < s.size(); ++i){
         student temp = s[i];
         add_rank.push_back({temp.student_code, normalize_name(temp.name), normalize_sex(temp), temp.point, rank_student(temp)});
     }
 }
 void print_rank(vector<student> &s){
     make_rank(s);
-    for(int i=0; i<add_rank.size(); ++i)
+    for(size_t i=0; i<add_rank.size(); ++i)
         add_rank[i].output();
 }
 //In ra điểm trung bình của các sinh viên
 void average_core(vector<student> &s){
     double result = 0.0;
-    for(int i=0; i<s.size(); ++i)
+    for(size_t i=0; i<s.size(); ++i)
         result = result + s[i].point;
     cout << result/s.size();
 }
 //In ra sinh viên có điểm lớn nhất
 void student_point_max(vector<student> &s){
      int max_temp = -1e9;
-     for(int i=0; i<s.size(); ++i){
+     for(size_t i=0; i<s.size(); ++i){
         if(max_temp < s[i].point)
             max_temp = s[i].point;
     }
-    for(int i=0; i<s.size(); ++i)
+    for(size_t i=0; i<s.size(); ++i)
         if(max_temp == s[i].point){
             student result = s[i];
             cout << normalize_name(result.name);
@@ -246,7 +246,7 @@ void student_point_max(vector<student> &s){
 //In ra thông tin có sinh viên nữ đạt loại giỏi không
 void student_girl_point_good(vector<student> &s){
     make_rank(s);
-    for(int i=0; i<add_rank.size(); ++i){
+    for(size_t i=0; i<add_rank.size(); ++i){
         if(add_rank[i].sex == "Nữ" && add_rank[i].rank == "Sinh viên này xếp loại giỏi!"){
             cout << "Có sinh viên nữ đạt loại giỏi";
             break;

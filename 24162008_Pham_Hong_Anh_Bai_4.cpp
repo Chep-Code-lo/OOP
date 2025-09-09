@@ -62,7 +62,6 @@ void is_right_triangle(const triangle &edge){
     double AB2 = dist2(edge.x1, edge.y1, edge.x2, edge.y2);
     double BC2 = dist2(edge.x2, edge.y2, edge.x3, edge.y3);
     double CA2 = dist2(edge.x3, edge.y3, edge.x1, edge.y1);
-    const double eps = 1e-9;//Sai số epsilon
     if(equal(AB2+BC2,CA2) || equal(AB2+CA2,BC2) || equal(BC2+CA2,AB2))
         cout << "Tam giác này là tam giác vuông";
     else cout << "Tam giác này không phải là tam giác vuông";

@@ -1,0 +1,101 @@
+id,tên,tác giả,thể loại,số lượng,trạng thái
+B001,Sách 1,Nguyễn Văn A,Khoa học,16,Còn
+B002,Sách 2,Đỗ Văn F,Lịch sử,8,Đang mượn
+B003,Sách 3,Hoàng Thị E,Công nghệ,18,Đang mượn
+B004,Sách 4,Vũ Thị G,Truyện tranh,13,Hết
+B005,Sách 5,Hoàng Thị E,Khoa học,17,Còn
+B006,Sách 6,Phạm Văn D,Khoa học,9,Còn
+B007,Sách 7,Vũ Thị G,Tiểu thuyết,6,Hết
+B008,Sách 8,Lê Thị C,Công nghệ,4,Còn
+B009,Sách 9,Trần Văn B,Khoa học,7,Hết
+B010,Sách 10,Phạm Văn D,Tiểu thuyết,1,Còn
+B011,Sách 11,Trần Văn B,Khoa học,4,Còn
+B012,Sách 12,Đỗ Văn F,Tiểu thuyết,11,Hết
+B013,Sách 13,Lê Thị C,Giáo trình,13,Đang mượn
+B014,Sách 14,Nguyễn Văn A,Lịch sử,14,Đang mượn
+B015,Sách 15,Phạm Văn D,Giáo trình,12,Hết
+B016,Sách 16,Hoàng Thị E,Tiểu thuyết,9,Đang mượn
+B017,Sách 17,Nguyễn Văn A,Công nghệ,2,Đang mượn
+B018,Sách 18,Trần Văn B,Khoa học,14,Hết
+B019,Sách 19,Trần Văn B,Tiểu thuyết,7,Đang mượn
+B020,Sách 20,Hoàng Thị E,Khoa học,12,Hết
+B021,Sách 21,Hoàng Thị E,Truyện tranh,5,Còn
+B022,Sách 22,Vũ Thị G,Lịch sử,0,Hết
+B023,Sách 23,Phạm Văn D,Khoa học,13,Còn
+B024,Sách 24,Nguyễn Văn A,Giáo trình,0,Còn
+B025,Sách 25,Lê Thị C,Tiểu thuyết,5,Đang mượn
+B026,Sách 26,Đỗ Văn F,Công nghệ,14,Hết
+B027,Sách 27,Lê Thị C,Tham khảo,0,Đang mượn
+B028,Sách 28,Lê Thị C,Giáo trình,0,Hết
+B029,Sách 29,Lê Thị C,Khoa học,10,Hết
+B030,Sách 30,Phạm Văn D,Giáo trình,13,Còn
+B031,Sách 31,Đỗ Văn F,Giáo trình,0,Còn
+B032,Sách 32,Trần Văn B,Tiểu thuyết,16,Còn
+B033,Sách 33,Phạm Văn D,Khoa học,15,Còn
+B034,Sách 34,Hoàng Thị E,Khoa học,1,Đang mượn
+B035,Sách 35,Phạm Văn D,Giáo trình,17,Đang mượn
+B036,Sách 36,Đỗ Văn F,Giáo trình,9,Đang mượn
+B037,Sách 37,Hoàng Thị E,Giáo trình,13,Đang mượn
+B038,Sách 38,Nguyễn Văn A,Khoa học,8,Còn
+B039,Sách 39,Trần Văn B,Lịch sử,4,Đang mượn
+B040,Sách 40,Phạm Văn D,Khoa học,0,Còn
+B041,Sách 41,Trần Văn B,Truyện tranh,14,Đang mượn
+B042,Sách 42,Lê Thị C,Công nghệ,1,Còn
+B043,Sách 43,Đỗ Văn F,Giáo trình,17,Hết
+B044,Sách 44,Trần Văn B,Tiểu thuyết,12,Hết
+B045,Sách 45,Đỗ Văn F,Tham khảo,5,Còn
+B046,Sách 46,Vũ Thị G,Công nghệ,6,Đang mượn
+B047,Sách 47,Nguyễn Văn A,Tiểu thuyết,15,Còn
+B048,Sách 48,Phạm Văn D,Công nghệ,16,Đang mượn
+B049,Sách 49,Đỗ Văn F,Giáo trình,17,Đang mượn
+B050,Sách 50,Phạm Văn D,Tham khảo,19,Còn
+B051,Sách 51,Vũ Thị G,Khoa học,14,Còn
+B052,Sách 52,Vũ Thị G,Tiểu thuyết,17,Hết
+B053,Sách 53,Phạm Văn D,Tham khảo,3,Hết
+B054,Sách 54,Đỗ Văn F,Lịch sử,11,Đang mượn
+B055,Sách 55,Vũ Thị G,Tiểu thuyết,2,Đang mượn
+B056,Sách 56,Đỗ Văn F,Truyện tranh,2,Còn
+B057,Sách 57,Trần Văn B,Lịch sử,9,Còn
+B058,Sách 58,Đỗ Văn F,Truyện tranh,18,Hết
+B059,Sách 59,Hoàng Thị E,Lịch sử,8,Hết
+B060,Sách 60,Vũ Thị G,Khoa học,6,Hết
+B061,Sách 61,Đỗ Văn F,Giáo trình,14,Đang mượn
+B062,Sách 62,Hoàng Thị E,Lịch sử,6,Hết
+B063,Sách 63,Lê Thị C,Tiểu thuyết,4,Còn
+B064,Sách 64,Lê Thị C,Khoa học,14,Hết
+B065,Sách 65,Hoàng Thị E,Giáo trình,11,Còn
+B066,Sách 66,Vũ Thị G,Giáo trình,15,Đang mượn
+B067,Sách 67,Đỗ Văn F,Tham khảo,14,Đang mượn
+B068,Sách 68,Nguyễn Văn A,Tham khảo,8,Còn
+B069,Sách 69,Phạm Văn D,Lịch sử,4,Hết
+B070,Sách 70,Nguyễn Văn A,Giáo trình,14,Hết
+B071,Sách 71,Lê Thị C,Lịch sử,19,Đang mượn
+B072,Sách 72,Trần Văn B,Khoa học,5,Đang mượn
+B073,Sách 73,Lê Thị C,Truyện tranh,7,Đang mượn
+B074,Sách 74,Trần Văn B,Truyện tranh,7,Hết
+B075,Sách 75,Hoàng Thị E,Tham khảo,18,Hết
+B076,Sách 76,Vũ Thị G,Truyện tranh,12,Đang mượn
+B077,Sách 77,Hoàng Thị E,Tiểu thuyết,7,Còn
+B078,Sách 78,Vũ Thị G,Truyện tranh,0,Đang mượn
+B079,Sách 79,Trần Văn B,Khoa học,14,Còn
+B080,Sách 80,Nguyễn Văn A,Tiểu thuyết,0,Còn
+B081,Sách 81,Đỗ Văn F,Khoa học,16,Còn
+B082,Sách 82,Phạm Văn D,Lịch sử,6,Hết
+B083,Sách 83,Phạm Văn D,Tiểu thuyết,10,Còn
+B084,Sách 84,Đỗ Văn F,Truyện tranh,15,Hết
+B085,Sách 85,Phạm Văn D,Truyện tranh,3,Còn
+B086,Sách 86,Trần Văn B,Lịch sử,8,Còn
+B087,Sách 87,Vũ Thị G,Giáo trình,6,Hết
+B088,Sách 88,Đỗ Văn F,Khoa học,4,Đang mượn
+B089,Sách 89,Hoàng Thị E,Công nghệ,20,Hết
+B090,Sách 90,Trần Văn B,Lịch sử,0,Hết
+B091,Sách 91,Vũ Thị G,Truyện tranh,2,Đang mượn
+B092,Sách 92,Lê Thị C,Truyện tranh,2,Hết
+B093,Sách 93,Lê Thị C,Khoa học,9,Hết
+B094,Sách 94,Hoàng Thị E,Công nghệ,5,Hết
+B095,Sách 95,Vũ Thị G,Tiểu thuyết,13,Đang mượn
+B096,Sách 96,Vũ Thị G,Lịch sử,2,Hết
+B097,Sách 97,Lê Thị C,Lịch sử,17,Còn
+B098,Sách 98,Lê Thị C,Công nghệ,18,Còn
+B099,Sách 99,Đỗ Văn F,Khoa học,3,Đang mượn
+B100,Sách 100,Phạm Văn D,Giáo trình,0,Còn

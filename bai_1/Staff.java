@@ -1,5 +1,4 @@
 package bai_1;
-
 public class Staff extends Officer{
     private String job;
     public Staff (String name, int age, String gender, String address, String job){
