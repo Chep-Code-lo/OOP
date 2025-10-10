@@ -30,7 +30,10 @@ class ClntArray{
         }
     }
     //Phạm Hồng Anh
-    ~ClntArray(){ delete[] array; }
+    ~ClntArray(){ 
+        if(array != nullptr)
+            delete[] array;
+    }
     //Phạm Hồng Anh
     void input(){
         for(int i=0; i<size; ++i)

@@ -5,67 +5,79 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args){
         Manage menu = new Manage();
+
+        // In menu 1 lần duy nhất
         printMenuOnce();
+
         while (true) {
-            System.out.print("\nNhập lựa chọn (0-3): ");
+            System.out.print("\n👉 Nhập lựa chọn (0-3): ");
             String choice = sc.nextLine().trim();
+
             switch (choice) {
                 case "1":
                     InputHelper.add_officer_new(menu, sc);
-                    System.out.println("Đã thêm cán bộ mới thành công!");
+                    System.out.println("✅ Đã thêm cán bộ mới thành công!");
                     pauseEnter();
-                    clearScreenAndShowMenu();   
+                    clearScreen();          // ⬅️ clear sau khi thao tác xong
                     break;
+
                 case "2":
-                    System.out.print("Nhập tên (hoặc từ khóa) cần tìm: ");
+                    System.out.print("🔎 Nhập tên (hoặc từ khóa) cần tìm: ");
                     String kw = sc.nextLine().trim();
                     List<Officer> ans = menu.Search_name(kw);
-                    if (ans == null || ans.isEmpty()) {
-                        System.out.println("Không tìm thấy!");
-                    } else {
-                        ans.forEach(System.out::println);
-                    }
+                    if (ans.isEmpty()) System.out.println("❌ Không tìm thấy!");
+                    else ans.forEach(System.out::println);
                     pauseEnter();
-                    clearScreenAndShowMenu();
+                    clearScreen();
                     break;
+
                 case "3":
                     List<Officer> all = menu.getAll();
-                    if (all == null || all.isEmpty()) {
-                        System.out.println("Danh sách rỗng!");
-                    } else {
-                        all.forEach(System.out::println);
-                    }
+                    if (all.isEmpty()) System.out.println("📭 Danh sách rỗng!");
+                    else all.forEach(System.out::println);
                     pauseEnter();
-                    clearScreenAndShowMenu();
+                    clearScreen();
                     break;
+
                 case "0":
-                    System.out.println("Tạm biệt!");
+                    System.out.println("👋 Tạm biệt!");
                     return;
+
                 default:
-                    System.out.println("Lựa chọn không hợp lệ, chỉ nhập 0-3!");
+                    System.out.println("⚠️ Lựa chọn không hợp lệ, chỉ nhập 0-3!");
                     pauseEnter();
-                    clearScreenAndShowMenu();
+                    clearScreen();
             }
+            // LƯU Ý: KHÔNG in lại menu; chỉ hiện lại prompt ở đầu vòng lặp
         }
     }
-    private static void printMenuOnce(){
+
+    // ===== Helpers =====
+    private static void printMenuOnce() {
         System.out.println("===== QUẢN LÝ CÁN BỘ =====");
         System.out.println("1. Thêm mới cán bộ");
         System.out.println("2. Tìm kiếm theo họ tên");
         System.out.println("3. Hiển thị thông tin về danh sách các cán bộ");
         System.out.println("0. Thoát khỏi chương trình");
     }
-    private static void pauseEnter(){
+
+    private static void pauseEnter() {
         System.out.print("\n⏸ Nhấn Enter để tiếp tục...");
         sc.nextLine();
     }
-    private static void clearScreenAndShowMenu(){
+
+    /** Clear màn hình: ưu tiên ANSI; nếu IDE/console không hỗ trợ thì fallback cls/clear. */
+    private static void clearScreen() {
         try {
-            System.out.print("\033[H\033[2J"); 
+            // Thử ANSI (đa số terminal/Windows 10+ support)
+            System.out.print("\033[H\033[2J"); // cursor home + clear screen
             System.out.flush();
         } catch (Exception ignored) {}
+
+        // Dự phòng: gọi lệnh hệ điều hành
         try {
             String os = System.getProperty("os.name").toLowerCase();
             ProcessBuilder pb = os.contains("win")
@@ -73,6 +85,8 @@ public class Main {
                     : new ProcessBuilder("clear");
             pb.inheritIO().start().waitFor();
         } catch (Exception ignored) {}
-        printMenuOnce();
+
+        // In lại dòng tiêu đề nho nhỏ (tùy thích). Nếu muốn sạch hẳn, bỏ dòng dưới:
+        // System.out.println("===== QUẢN LÝ CÁN BỘ ===== (menu đã hiển thị ở trên, chỉ nhập lựa chọn)");
     }
 }
