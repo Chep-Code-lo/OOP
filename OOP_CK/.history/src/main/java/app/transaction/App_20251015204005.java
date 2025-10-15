@@ -14,12 +14,12 @@ public class App {
     public App(TransactionService service) { this.service = service; }
 
     public void showBalances() {
-         ConsoleUtils.printHeader("SỐ DƯ");
+        System.out.println("-- SỐ DƯ --");
         BigDecimal total = BigDecimal.ZERO;
         List<Account> accounts = service.getAccounts();
-        if(accounts.isEmpty()){
+        if (accounts.isEmpty()) {
             System.out.println("(chưa có tài khoản)");
-        }else{
+        } else {
             for (Account a : accounts) {
                 BigDecimal bal = service.getBalance(a.getId());
                 System.out.println("• " + a.getName() + " [" + a.getId() + "] | Số dư: " + bal.toPlainString());
