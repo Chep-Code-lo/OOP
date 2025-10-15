@@ -1,9 +1,12 @@
 package app.loan;
+
 import java.util.Scanner;
 
+/** Helper đọc dữ liệu từ console với thông báo lỗi thân thiện. */
 public final class ConsoleIO{
     private ConsoleIO() {}
 
+    /** Đọc số thực >= 0, tự động báo lỗi và yêu cầu nhập lại. */
     public static double readPositiveDouble(Scanner sc, String prompt){
         while (true) {
             System.out.print(prompt);
@@ -18,6 +21,7 @@ public final class ConsoleIO{
         }
     }
 
+    /** Đọc chuỗi không rỗng (trim khoảng trắng). */
     public static String readNonBlank(Scanner sc, String prompt){
         while (true) {
             System.out.print(prompt);

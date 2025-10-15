@@ -13,14 +13,27 @@ public final class ExportTransactions {
         List<String[]> rows = new ArrayList<>();
         for (var t : DataStore.transactions()) {
             rows.add(new String[]{
-                t.date,
-                t.type,
-                String.valueOf(t.amount),
-                t.account,
-                t.category,
-                t.note == null ? "" : t.note
+                value(t, DataStore.TransactionFields.DATE),
+                value(t, DataStore.TransactionFields.TYPE),
+                value(t, DataStore.TransactionFields.AMOUNT),
+                preferName(t),
+                value(t, DataStore.TransactionFields.CATEGORY),
+                value(t, DataStore.TransactionFields.NOTE)
             });
         }
         return CsvExporter.writeCsv("transactions.csv", headers, rows);
+    }
+
+    /** Ưu tiên tên hiển thị; fallback sang ID nếu chưa có. */
+    private static String preferName(java.util.Map<String, Object> row) {
+        String name = value(row, DataStore.TransactionFields.ACCOUNT_NAME);
+        if (!name.isBlank()) return name;
+        return value(row, DataStore.TransactionFields.ACCOUNT_ID);
+    }
+
+    /** Trích giá trị từ map và chuyển sang chuỗi an toàn cho CSV. */
+    private static String value(java.util.Map<String, Object> row, String key) {
+        Object v = row.get(key);
+        return v == null ? "" : v.toString();
     }
 }

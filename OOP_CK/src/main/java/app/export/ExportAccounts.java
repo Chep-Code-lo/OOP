@@ -13,13 +13,19 @@ public final class ExportAccounts {
         List<String[]> rows = new ArrayList<>();
         for (var a : DataStore.accounts()) {
             rows.add(new String[]{
-                a.id == null ? "" : a.id,
-                a.name,
-                a.type,
-                String.valueOf(a.balance),
-                a.note == null ? "" : a.note
+                value(a, DataStore.AccountFields.ID),
+                value(a, DataStore.AccountFields.NAME),
+                value(a, DataStore.AccountFields.TYPE),
+                value(a, DataStore.AccountFields.BALANCE),
+                value(a, DataStore.AccountFields.NOTE)
             });
         }
         return CsvExporter.writeCsv("accounts.csv", headers, rows);
+    }
+
+    /** Trích giá trị từ map và chuyển sang chuỗi an toàn cho CSV. */
+    private static String value(java.util.Map<String, Object> row, String key) {
+        Object v = row.get(key);
+        return v == null ? "" : v.toString();
     }
 }

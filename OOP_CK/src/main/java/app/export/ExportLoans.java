@@ -15,18 +15,25 @@ public final class ExportLoans {
         };
         List<String[]> rows = new ArrayList<>();
         for (var l : DataStore.loans()) {
+            String amount = value(l, DataStore.LoanFields.AMOUNT);
             rows.add(new String[]{
-                l.loanId,
-                l.status == null ? "" : l.status,
-                l.name == null ? "" : l.name,
-                String.valueOf(l.amount) + " VND",
-                l.phone == null ? "" : l.phone,
-                l.dueDate == null ? "" : l.dueDate,
-                String.valueOf(l.interest),
-                l.note == null ? "" : l.note,
-                l.createdAt == null ? "" : l.createdAt
+                value(l, DataStore.LoanFields.ID),
+                value(l, DataStore.LoanFields.STATUS),
+                value(l, DataStore.LoanFields.NAME),
+                amount.isBlank() ? "" : amount + " VND",
+                value(l, DataStore.LoanFields.PHONE),
+                value(l, DataStore.LoanFields.DUE_DATE),
+                value(l, DataStore.LoanFields.INTEREST),
+                value(l, DataStore.LoanFields.NOTE),
+                value(l, DataStore.LoanFields.CREATED_AT)
             });
         }
         return CsvExporter.writeCsv("loans.csv", headers, rows);
+    }
+
+    /** Trích giá trị từ map và chuyển sang chuỗi an toàn cho CSV. */
+    private static String value(java.util.Map<String, Object> row, String key) {
+        Object v = row.get(key);
+        return v == null ? "" : v.toString();
     }
 }

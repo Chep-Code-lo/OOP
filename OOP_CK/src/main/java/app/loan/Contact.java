@@ -1,4 +1,6 @@
 package app.loan;
+
+/** Mô hình dữ liệu tối giản cho một khoản vay/cho vay. */
 public class Contact {
     public enum Stats { CoNo, ChNo } 
 

@@ -13,12 +13,18 @@ public final class ExportLoanPayments {
         List<String[]> rows = new ArrayList<>();
         for (var p : DataStore.loanPayments()) {
             rows.add(new String[]{
-                p.loanId,
-                p.date,
-                String.valueOf(p.amount),
-                p.note == null ? "" : p.note
+                value(p, DataStore.LoanPaymentFields.LOAN_ID),
+                value(p, DataStore.LoanPaymentFields.DATE),
+                value(p, DataStore.LoanPaymentFields.AMOUNT),
+                value(p, DataStore.LoanPaymentFields.NOTE)
             });
         }
         return CsvExporter.writeCsv("loan_payments.csv", headers, rows);
+    }
+
+    /** Trích giá trị từ map và chuyển sang chuỗi an toàn cho CSV. */
+    private static String value(java.util.Map<String, Object> row, String key) {
+        Object v = row.get(key);
+        return v == null ? "" : v.toString();
     }
 }

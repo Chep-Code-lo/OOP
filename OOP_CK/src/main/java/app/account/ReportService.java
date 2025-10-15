@@ -32,27 +32,30 @@ public class ReportService {
     /** Tổng hợp theo danh sách tài khoản (null = tất cả). */
     public Map<String, BigDecimal> summarize(Collection<String> accountIds) {
         // Lấy tất cả giao dịch; không lọc ngày (start/end = null), không lọc kiểu (type = null)
-        List<?> txns = ledger.query(
+        List<Map<String, Object>> txns = ledger.query(
                 (accountIds == null) ? null : new ArrayList<>(accountIds),
                 null,  // start
                 null,  // end
                 null   // type
         );
 
-        BigDecimal income = BigDecimal.ZERO;
-        BigDecimal expense = BigDecimal.ZERO;
+        // Gom tổng thu: lọc các giao dịch có bản chất tiền vào rồi cộng dồn.
+        BigDecimal income = txns.stream()
+                .filter(t -> {
+                    TxnType type = (TxnType) t.get(Transaction.KEY_TYPE);
+                    return type == TxnType.INCOME || type == TxnType.TRANSFER_IN;
+                })
+                .map(t -> (BigDecimal) t.get(Transaction.KEY_AMOUNT))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        for (Object obj : txns) {
-            var t = (Transaction) obj;
-            TxnType type = t.getType();
-            BigDecimal amount = t.getAmount();
-
-            if (type == TxnType.INCOME || type == TxnType.TRANSFER_IN) {
-                income = income.add(amount);
-            } else if (type == TxnType.EXPENSE || type == TxnType.TRANSFER_OUT) {
-                expense = expense.add(amount);
-            }
-        }
+        // Gom tổng chi: lọc các giao dịch tiền ra rồi cộng dồn.
+        BigDecimal expense = txns.stream()
+                .filter(t -> {
+                    TxnType type = (TxnType) t.get(Transaction.KEY_TYPE);
+                    return type == TxnType.EXPENSE || type == TxnType.TRANSFER_OUT;
+                })
+                .map(t -> (BigDecimal) t.get(Transaction.KEY_AMOUNT))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal net = income.subtract(expense);
 

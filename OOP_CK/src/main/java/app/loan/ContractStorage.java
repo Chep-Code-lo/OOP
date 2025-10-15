@@ -7,19 +7,26 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * Lưu trữ tạm thời thông tin hợp đồng vay và đồng bộ sang DataStore dưới dạng map.
+ * Sử dụng hàng đợi PENDING cho các contact nhập từ UI trước khi ghi ra CSV.
+ */
 public class ContractStorage {
     private static final Path COUNTER_PATH = Paths.get("data", "id_counters.properties");
     private static final int  ID_WIDTH     = 4; // -> Co0001, Ch0001 (đổi 5 nếu muốn Co00001)
 
     private static final List<Contact> PENDING = new ArrayList<>();
 
+    /** Nhận contact nhập từ UI và đưa vào hàng đợi chờ ghi. */
     public static synchronized void queue(Contact contact) {
         PENDING.add(contact);
     }
 
+    /** Đẩy toàn bộ contact đang chờ vào DataStore, trả về số bản ghi đã xử lý. */
     public static synchronized int flushPending() throws IOException {
         int flushed = 0;
         while (!PENDING.isEmpty()) {
@@ -38,6 +45,7 @@ public class ContractStorage {
         return flushed;
     }
 
+    /** Ghi một khoản vay (kể cả từ flush) vào DataStore với map các trường chuẩn hóa. */
     public static void saveBorrow(String status,
                                   String name,
                                   double money,
@@ -48,17 +56,17 @@ public class ContractStorage {
         String id = nextIdForStatus(status);
         String createdAt = LocalDateTime.now().toString();
 
-        DataStore.addLoan(new DataStore.Loan(
-                id,
-                status,
-                name,
-                money,
-                phone,
-                dueDate,
-                interest,
-                note,
-                createdAt
-        ));
+        var row = new LinkedHashMap<String, Object>();
+        row.put(DataStore.LoanFields.ID, id);
+        row.put(DataStore.LoanFields.STATUS, status);
+        row.put(DataStore.LoanFields.NAME, name);
+        row.put(DataStore.LoanFields.AMOUNT, money);
+        row.put(DataStore.LoanFields.PHONE, phone);
+        row.put(DataStore.LoanFields.DUE_DATE, dueDate);
+        row.put(DataStore.LoanFields.INTEREST, interest);
+        row.put(DataStore.LoanFields.NOTE, note);
+        row.put(DataStore.LoanFields.CREATED_AT, createdAt);
+        DataStore.addLoan(row);
     }
 
     // ====== Sinh ID tuần tự theo stats ======

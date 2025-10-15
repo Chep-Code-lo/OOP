@@ -8,7 +8,11 @@ import app.account.ReportMenu;
 import app.account.TransferMenu;
 
 public class MenuAccount {
-    private final FinanceManager fm = new FinanceManager();
+    private final FinanceManager fm;
+
+    public MenuAccount(FinanceManager fm) {
+        this.fm = fm;
+    }
 
     public void showMenu() {
         while (true) {

@@ -121,9 +121,8 @@ public class AccountMenu {
             return;
         }
         for (var a : list) {
-            String loai = (a instanceof BankAccount) ? "Ngân hàng" : "Ví điện tử";
             System.out.printf("- %s | %s | ID: %s | VNĐ | số dư: %s%n",
-                    a.getName(), loai, a.getId(), a.getBalance());
+                    a.getName(), a.getType(), a.getId(), a.getBalance());
         }
     }
 

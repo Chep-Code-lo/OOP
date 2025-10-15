@@ -1,86 +1,180 @@
 package app.transaction;
+
+import app.account.*;
+import app.store.DataStore;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.util.*;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
+/** Nghiệp vụ giao dịch thu/chi, tận dụng tài khoản thực tế trong FinanceManager. */
 public class TransactionService {
-    private final Map<String, Account> accounts = new HashMap<>();
-    private final Map<String, List<Transaction>> ledger   = new HashMap<>();
+    private final FinanceManager financeManager;
+    // Lưu lịch sử giao dịch theo từng tài khoản bằng List<Transaction> (Transaction đã bọc dữ liệu Map).
+    private final Map<String, List<Transaction>> ledger = new HashMap<>();
+
+    public TransactionService(FinanceManager financeManager) {
+        this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
+    }
+
+    /** Danh sách tài khoản đang có trong FinanceManager. */
     public List<Account> getAccounts() {
-        return new ArrayList<>(accounts.values());
+        return new ArrayList<>(financeManager.listAccounts());
     }
 
+    public Transaction addTransaction(String accountId,
+                                      TxnType type,
+                                      BigDecimal amount,
+                                      LocalDate date,
+                                      String category,
+                                      String note) {
+        if (accountId == null || accountId.isBlank())
+            throw new IllegalArgumentException("Thiếu tài khoản");
+        if (type == null || amount == null || date == null)
+            throw new IllegalArgumentException("Thiếu dữ liệu");
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Số tiền phải > 0");
 
-    public void addAccount(String name, BigDecimal opening) {
-        if (name == null) throw new IllegalArgumentException("name null");
-        if (accounts.containsKey(name)) throw new IllegalArgumentException("Tài khoản đã tồn tại");
-        accounts.put(name, new Account(name, opening));
-        ledger.put(name, new ArrayList<>());
+        Account account = financeManager.requireAccount(accountId); // Lấy Account thực để điều chỉnh số dư.
+        BigDecimal normalized = amount.setScale(2, RoundingMode.HALF_UP);
+        Instant when = toInstant(date);
+
+        applyDelta(account, type, normalized, when); // Áp dụng lên số dư thực trước khi lưu sổ.
+
+        Transaction tx = new Transaction(
+                accountId,
+                type,
+                normalized,
+                date,
+                category,
+                note
+        );
+        ledgerFor(accountId).add(tx); // Giữ lại bản Transaction phục vụ chỉnh sửa tương lai.
+        upsertStoreTransaction(tx, account.getName()); // Đồng bộ sang DataStore (Map cho exporter).
+        return tx;
     }
 
-    public void addTransaction(String accountName, TxType type, BigDecimal amount,LocalDate date, String category, String note) {
-        Account acc = accounts.get(accountName);
-        List<Transaction> list = ledger.get(accountName);
-        if (acc == null || list == null) throw new IllegalArgumentException("Tài khoản không tồn tại");
-        if (type == null || amount == null || date == null) throw new IllegalArgumentException("Thiếu dữ liệu");
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Số tiền phải > 0");
+    public void editTransaction(String accountId,
+                                String transactionId,
+                                TxnType newType,
+                                BigDecimal newAmount,
+                                LocalDate newDate,
+                                String newCategory,
+                                String newNote) {
+        Transaction tx = findTransaction(accountId, transactionId);
 
-        if (category == null) category = "";
-        if (note == null) note = "";
+        TxnType targetType = (newType == null) ? tx.type : newType;
+        LocalDate targetDate = (newDate == null) ? tx.date : newDate;
+        BigDecimal targetAmount = (newAmount == null)
+                ? tx.amount
+                : newAmount.setScale(2, RoundingMode.HALF_UP);
 
-        list.add(new Transaction(accountName, type, amount, date, category, note));
+        if (targetAmount.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Số tiền phải > 0");
 
+        BigDecimal delta = signed(targetType, targetAmount)
+                .subtract(signed(tx.type, tx.amount));
+
+        if (delta.signum() != 0) {
+            Account account = financeManager.requireAccount(accountId);
+            Instant when = toInstant(targetDate);
+            applyDelta(account, delta.signum() > 0 ? TxnType.INCOME : TxnType.EXPENSE,
+                    delta.abs(), when);
+        }
+
+        tx.type = targetType; // Cập nhật bản Transaction in-memory để phản ánh thay đổi.
+        tx.amount = targetAmount;
+        tx.date = targetDate;
+        tx.category = (newCategory == null) ? tx.category : newCategory;
+        tx.note = (newNote == null) ? tx.note : newNote;
+
+        String accountName = financeManager.requireAccount(accountId).getName();
+        upsertStoreTransaction(tx, accountName);
     }
 
-    public void editTransaction(String accountName, int index, TxType newType, BigDecimal newAmount,
-                                LocalDate newDate, String newCategory, String newNote) {
-        List<Transaction> list = ledger.get(accountName);
-        if (list == null) throw new IllegalArgumentException("Tài khoản không tồn tại");
-        if (index < 0 || index >= list.size()) throw new IllegalArgumentException("STT không hợp lệ");
-        if (newType == null || newAmount == null || newDate == null) throw new IllegalArgumentException("Thiếu dữ liệu");
-        if (newAmount.compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Số tiền phải > 0");
+    public void deleteTransaction(String accountId, String transactionId) {
+        List<Transaction> list = ledgerFor(accountId);
+        Transaction tx = findTransaction(accountId, transactionId);
+        list.remove(tx);
 
-        Transaction t = list.get(index);
-        t.type = newType;
-        t.amount = newAmount;
-        t.date = newDate;
-        t.category = (newCategory == null ? "" : newCategory);
-        t.note = (newNote == null ? "" : newNote);
+        Account account = financeManager.requireAccount(accountId);
+        BigDecimal delta = signed(tx.type, tx.amount).negate();
+        if (delta.signum() > 0) {
+            applyDelta(account, TxnType.INCOME, delta, toInstant(tx.date));
+        } else if (delta.signum() < 0) {
+            applyDelta(account, TxnType.EXPENSE, delta.abs(), toInstant(tx.date));
+        }
 
+        DataStore.removeTransactionById(tx.id);
     }
 
-    public void deleteTransaction(String accountName, int index) {
-        List<Transaction> list = ledger.get(accountName);
-        if (list == null) throw new IllegalArgumentException("Tài khoản không tồn tại");
-        if (index < 0 || index >= list.size()) throw new IllegalArgumentException("STT không hợp lệ");
-        list.remove(index);
-
-    }
-
-    // Lịch sử theo ngày
-    public List<Transaction> historySorted(String accountName) {
-        List<Transaction> list = ledger.get(accountName);
-        if (list == null) throw new IllegalArgumentException("Tài khoản không tồn tại");
+    public List<Transaction> historySorted(String accountId) {
+        List<Transaction> list = ledgerFor(accountId);
         List<Transaction> copy = new ArrayList<>(list);
-        Collections.sort(copy, new Comparator<Transaction>() {
-            @Override public int compare(Transaction a, Transaction b) {
-                return a.date.compareTo(b.date);
-            }
-        });
+        copy.sort(Comparator.comparing(t -> t.date));
         return copy;
     }
 
+    public BigDecimal getBalance(String accountId) {
+        return financeManager.requireAccount(accountId).getBalance();
+    }
 
-    public BigDecimal getBalance(String accountName) {
-        Account acc = accounts.get(accountName);
-        List<Transaction> list = ledger.get(accountName);
-        if (acc == null || list == null) throw new IllegalArgumentException("Tài khoản không tồn tại");
+    public String resolveAccountName(String accountId) {
+        return financeManager.requireAccount(accountId).getName();
+    }
 
-        BigDecimal total = acc.getBalance();
-        for (Transaction t : list) {
-            if (t.type == TxType.INCOME) total = total.add(t.amount);
-            else total = total.subtract(t.amount);
+    /** Lấy (hoặc khởi tạo) danh sách giao dịch ứng với một tài khoản. */
+    private List<Transaction> ledgerFor(String accountId) {
+        return ledger.computeIfAbsent(accountId, k -> new ArrayList<>());
+    }
+
+    /** Tra cứu giao dịch theo id trong ledger nội bộ của tài khoản. */
+    private Transaction findTransaction(String accountId, String transactionId) {
+        return ledgerFor(accountId).stream()
+                .filter(t -> Objects.equals(t.id, transactionId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy giao dịch"));
+    }
+
+    private static Instant toInstant(LocalDate date) {
+        return date.atStartOfDay(ZoneId.systemDefault()).toInstant();
+    }
+
+    private static BigDecimal signed(TxnType type, BigDecimal amount) {
+        return (type == TxnType.INCOME) ? amount : amount.negate();
+    }
+
+    /** Áp dụng biến động số dư trực tiếp lên Account tuỳ loại thu/chi. */
+    private void applyDelta(Account account, TxnType type, BigDecimal amount, Instant when) {
+        if (type == TxnType.INCOME) {
+            account.deposit(amount, when);
+        } else if (type == TxnType.EXPENSE) {
+            account.withdraw(amount, when);
+        } else {
+            throw new IllegalArgumentException("Chỉ hỗ trợ thu/chi");
         }
-        return total;
+    }
+
+    /** Đồng bộ giao dịch sang DataStore (map bất biến) để module xuất CSV sử dụng. */
+    private void upsertStoreTransaction(Transaction tx, String accountName) {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put(DataStore.TransactionFields.ID, tx.id);
+        row.put(DataStore.TransactionFields.DATE, tx.date.toString());
+        row.put(DataStore.TransactionFields.TYPE, tx.type.name());
+        row.put(DataStore.TransactionFields.AMOUNT, tx.amount.toPlainString());
+        row.put(DataStore.TransactionFields.ACCOUNT_ID, tx.accountId);
+        row.put(DataStore.TransactionFields.ACCOUNT_NAME, accountName);
+        row.put(DataStore.TransactionFields.CATEGORY, tx.category);
+        row.put(DataStore.TransactionFields.NOTE, tx.note);
+        DataStore.upsertTransaction(row);
     }
 }

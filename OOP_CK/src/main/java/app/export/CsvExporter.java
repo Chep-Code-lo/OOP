@@ -29,7 +29,7 @@ public class CsvExporter {
             writer.write('\uFEFF');
             writer.write(String.join(",", headers));
             writer.newLine();
-            for (String[] row : rows) {
+            for (String[] row : rows) { // mỗi phần tử đã được chuẩn hóa thành chuỗi ở exporter.
                 writer.write(String.join(",", row));
                 writer.newLine();
             }
