@@ -5,15 +5,16 @@ import app.store.DataStore;
 import java.math.*;
 import java.time.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /** Nghiệp vụ giao dịch thu/chi, tận dụng tài khoản thực tế trong FinanceManager. */
 public class TransactionService {
     private final FinanceManager financeManager;
-    // Lưu lịch sử giao dịch theo từng tài khoản bằng List<Transaction> (Transaction đã bọc dữ liệu Map).
-    private final Map<String, List<Transaction>> ledger = new HashMap<>();
+    private final Ledger ledger;
 
     public TransactionService(FinanceManager financeManager) {
         this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
+        this.ledger = financeManager.getLedger();
     }
 
     /** Danh sách tài khoản đang có trong FinanceManager. */
@@ -40,17 +41,19 @@ public class TransactionService {
 
         applyDelta(account, type, normalized, when); // Áp dụng lên số dư thực trước khi lưu sổ.
 
-        Transaction tx = new Transaction(
-                accountId,
-                type,
-                normalized,
-                date,
-                category,
-                note
-        );
-        ledgerFor(accountId).add(tx); // Giữ lại bản Transaction phục vụ chỉnh sửa tương lai.
-        upsertStoreTransaction(tx, account.getName()); // Đồng bộ sang DataStore (Map cho exporter).
-        return tx;
+        app.account.Transaction entry = app.account.Transaction.builder()
+                .accountId(accountId)
+                .type(type)
+                .amount(normalized)
+                .occurredAt(when)
+                .note(note)
+                .category(category)
+                .build();
+        ledger.record(entry);
+
+        Transaction view = toView(entry);
+        upsertStoreTransaction(view, account.getName()); // Đồng bộ sang DataStore (Map cho exporter).
+        return view;
     }
 
     public void editTransaction(String accountId,
@@ -60,58 +63,61 @@ public class TransactionService {
                                 LocalDate newDate,
                                 String newCategory,
                                 String newNote) {
-        Transaction tx = findTransaction(accountId, transactionId);
+        app.account.Transaction entry = findLedgerTransaction(accountId, transactionId);
 
-        TxnType targetType = (newType == null) ? tx.type : newType;
-        LocalDate targetDate = (newDate == null) ? tx.date : newDate;
+        TxnType targetType = (newType == null) ? entry.getType() : newType;
+        Instant targetWhen = (newDate == null)
+                ? entry.getOccurredAt()
+                : toInstant(newDate);
         BigDecimal targetAmount = (newAmount == null)
-                ? tx.amount
+                ? entry.getAmount()
                 : newAmount.setScale(2, RoundingMode.HALF_UP);
 
         if (targetAmount.compareTo(BigDecimal.ZERO) <= 0)
             throw new IllegalArgumentException("Số tiền phải > 0");
 
         BigDecimal delta = signed(targetType, targetAmount)
-                .subtract(signed(tx.type, tx.amount));
+                .subtract(signed(entry.getType(), entry.getAmount()));
 
         if (delta.signum() != 0) {
             Account account = financeManager.requireAccount(accountId);
-            Instant when = toInstant(targetDate);
-            applyDelta(account, delta.signum() > 0 ? TxnType.INCOME : TxnType.EXPENSE,
-                    delta.abs(), when);
+            applyDelta(account,
+                    delta.signum() > 0 ? TxnType.INCOME : TxnType.EXPENSE,
+                    delta.abs(),
+                    targetWhen);
         }
 
-        tx.type = targetType; // Cập nhật bản Transaction in-memory để phản ánh thay đổi.
-        tx.amount = targetAmount;
-        tx.date = targetDate;
-        tx.category = (newCategory == null) ? tx.category : newCategory;
-        tx.note = (newNote == null) ? tx.note : newNote;
+        entry.updateType(targetType);
+        entry.updateAmount(targetAmount);
+        entry.updateOccurredAt(targetWhen);
+        if (newCategory != null) entry.updateCategory(newCategory);
+        if (newNote != null) entry.updateNote(newNote);
 
         String accountName = financeManager.requireAccount(accountId).getName();
-        upsertStoreTransaction(tx, accountName);
+        upsertStoreTransaction(toView(entry), accountName);
     }
 
     public void deleteTransaction(String accountId, String transactionId) {
-        List<Transaction> list = ledgerFor(accountId);
-        Transaction tx = findTransaction(accountId, transactionId);
-        list.remove(tx);
+        app.account.Transaction entry = findLedgerTransaction(accountId, transactionId);
+        ledger.remove(entry);
 
         Account account = financeManager.requireAccount(accountId);
-        BigDecimal delta = signed(tx.type, tx.amount).negate();
+        BigDecimal delta = signed(entry.getType(), entry.getAmount()).negate();
         if (delta.signum() > 0) {
-            applyDelta(account, TxnType.INCOME, delta, toInstant(tx.date));
+            applyDelta(account, TxnType.INCOME, delta, entry.getOccurredAt());
         } else if (delta.signum() < 0) {
-            applyDelta(account, TxnType.EXPENSE, delta.abs(), toInstant(tx.date));
+            applyDelta(account, TxnType.EXPENSE, delta.abs(), entry.getOccurredAt());
         }
 
-        DataStore.removeTransactionById(tx.id);
+        DataStore.removeTransactionById(entry.getId());
     }
 
     public List<Transaction> historySorted(String accountId) {
-        List<Transaction> list = ledgerFor(accountId);
-        List<Transaction> copy = new ArrayList<>(list);
-        copy.sort(Comparator.comparing(t -> t.date));
-        return copy;
+        List<Transaction> list = ledger.listByAccount(accountId).stream()
+                .map(this::toView)
+                .sorted(Comparator.comparing(t -> t.date))
+                .collect(Collectors.toList());
+        return list;
     }
 
     public BigDecimal getBalance(String accountId) {
@@ -122,17 +128,22 @@ public class TransactionService {
         return financeManager.requireAccount(accountId).getName();
     }
 
-    /** Lấy (hoặc khởi tạo) danh sách giao dịch ứng với một tài khoản. */
-    private List<Transaction> ledgerFor(String accountId) {
-        return ledger.computeIfAbsent(accountId, k -> new ArrayList<>());
+    private app.account.Transaction findLedgerTransaction(String accountId, String txnId) {
+        return ledger.find(accountId, txnId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy giao dịch"));
     }
 
-    /** Tra cứu giao dịch theo id trong ledger nội bộ của tài khoản. */
-    private Transaction findTransaction(String accountId, String transactionId) {
-        return ledgerFor(accountId).stream()
-                .filter(t -> Objects.equals(t.id, transactionId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy giao dịch"));
+    private Transaction toView(app.account.Transaction source) {
+        LocalDate date = LocalDate.ofInstant(source.getOccurredAt(), ZoneId.systemDefault());
+        return new Transaction(
+                source.getId(),
+                source.getAccountId(),
+                source.getType(),
+                source.getAmount(),
+                date,
+                source.getCategory(),
+                source.getNote()
+        );
     }
 
     private static Instant toInstant(LocalDate date) {
