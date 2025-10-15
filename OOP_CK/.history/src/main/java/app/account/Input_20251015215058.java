@@ -13,13 +13,6 @@ public class Input {
     private final Scanner sc;
 
     public Input(Scanner sc) { this.sc = sc; }
-
-    /** Đọc một dòng và trim khoảng trắng. */
-    public String line(String prompt) {
-        System.out.print(prompt);
-        return sc.nextLine().trim();
-    }
-
     /**
      * Nhập số tiền (> 0):
      * - <= 0 -> báo lỗi và yêu cầu nhập lại.

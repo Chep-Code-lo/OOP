@@ -61,7 +61,7 @@ public class Menutransaction {
                         ConsoleUtils.pause(sc);
                     }
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("!! Lỗi: " + e.getMessage());
                 ConsoleUtils.pause(sc);
             }

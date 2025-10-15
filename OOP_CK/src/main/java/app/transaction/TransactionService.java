@@ -22,7 +22,7 @@ public class TransactionService {
         return new ArrayList<>(financeManager.listAccounts());
     }
 
-    public Transaction addTransaction(String accountId,
+    public app.account.Transaction addTransaction(String accountId,
                                       TxnType type,
                                       BigDecimal amount,
                                       LocalDate date,
@@ -51,9 +51,8 @@ public class TransactionService {
                 .build();
         ledger.record(entry);
 
-        Transaction view = toView(entry);
-        upsertStoreTransaction(view, account.getName()); // Đồng bộ sang DataStore (Map cho exporter).
-        return view;
+        upsertStoreTransaction(entry, account.getName()); // Đồng bộ sang DataStore (Map cho exporter).
+        return entry;
     }
 
     public void editTransaction(String accountId,
@@ -94,7 +93,7 @@ public class TransactionService {
         if (newNote != null) entry.updateNote(newNote);
 
         String accountName = financeManager.requireAccount(accountId).getName();
-        upsertStoreTransaction(toView(entry), accountName);
+        upsertStoreTransaction(entry, accountName);
     }
 
     public void deleteTransaction(String accountId, String transactionId) {
@@ -112,10 +111,9 @@ public class TransactionService {
         DataStore.removeTransactionById(entry.getId());
     }
 
-    public List<Transaction> historySorted(String accountId) {
-        List<Transaction> list = ledger.listByAccount(accountId).stream()
-                .map(this::toView)
-                .sorted(Comparator.comparing(t -> t.date))
+    public List<app.account.Transaction> historySorted(String accountId) {
+        List<app.account.Transaction> list = ledger.listByAccount(accountId).stream()
+                .sorted(Comparator.comparing(app.account.Transaction::getOccurredAt))
                 .collect(Collectors.toList());
         return list;
     }
@@ -131,19 +129,6 @@ public class TransactionService {
     private app.account.Transaction findLedgerTransaction(String accountId, String txnId) {
         return ledger.find(accountId, txnId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy giao dịch"));
-    }
-
-    private Transaction toView(app.account.Transaction source) {
-        LocalDate date = LocalDate.ofInstant(source.getOccurredAt(), ZoneId.systemDefault());
-        return new Transaction(
-                source.getId(),
-                source.getAccountId(),
-                source.getType(),
-                source.getAmount(),
-                date,
-                source.getCategory(),
-                source.getNote()
-        );
     }
 
     private static Instant toInstant(LocalDate date) {
@@ -166,16 +151,17 @@ public class TransactionService {
     }
 
     /** Đồng bộ giao dịch sang DataStore (map bất biến) để module xuất CSV sử dụng. */
-    private void upsertStoreTransaction(Transaction tx, String accountName) {
+    private void upsertStoreTransaction(app.account.Transaction tx, String accountName) {
         Map<String, Object> row = new LinkedHashMap<>();
-        row.put(DataStore.TransactionFields.ID, tx.id);
-        row.put(DataStore.TransactionFields.DATE, tx.date.toString());
-        row.put(DataStore.TransactionFields.TYPE, tx.type.name());
-        row.put(DataStore.TransactionFields.AMOUNT, tx.amount.toPlainString());
-        row.put(DataStore.TransactionFields.ACCOUNT_ID, tx.accountId);
+        LocalDate date = LocalDate.ofInstant(tx.getOccurredAt(), ZoneId.systemDefault());
+        row.put(DataStore.TransactionFields.ID, tx.getId());
+        row.put(DataStore.TransactionFields.DATE, date.toString());
+        row.put(DataStore.TransactionFields.TYPE, tx.getType().name());
+        row.put(DataStore.TransactionFields.AMOUNT, tx.getAmount().toPlainString());
+        row.put(DataStore.TransactionFields.ACCOUNT_ID, tx.getAccountId());
         row.put(DataStore.TransactionFields.ACCOUNT_NAME, accountName);
-        row.put(DataStore.TransactionFields.CATEGORY, tx.category);
-        row.put(DataStore.TransactionFields.NOTE, tx.note);
+        row.put(DataStore.TransactionFields.CATEGORY, tx.getCategory());
+        row.put(DataStore.TransactionFields.NOTE, tx.getNote());
         DataStore.upsertTransaction(row);
     }
 }

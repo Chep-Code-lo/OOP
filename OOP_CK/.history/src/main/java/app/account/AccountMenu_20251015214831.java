@@ -16,7 +16,7 @@ public class AccountMenu {
             System.out.println("4) Hiển thị danh sách tài khoản");
             System.out.println("0) Quay lại");
             System.out.print("Chọn (0-4): ");
-
+            
             try {
                 switch(sc.nextLine().trim()){
                     case "1"->{
@@ -45,7 +45,7 @@ public class AccountMenu {
                         sc.nextLine();
                         break;
                     }
-                    case"0"-> {
+                    case" 0"-> {
                         return;
                     } 
                     default->{
