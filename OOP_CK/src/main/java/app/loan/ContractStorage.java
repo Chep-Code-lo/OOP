@@ -1,0 +1,92 @@
+package app.loan;
+
+import app.store.DataStore;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+public class ContractStorage {
+    private static final Path COUNTER_PATH = Paths.get("data", "id_counters.properties");
+    private static final int  ID_WIDTH     = 4; // -> Co0001, Ch0001 (đổi 5 nếu muốn Co00001)
+
+    private static final List<Contact> PENDING = new ArrayList<>();
+
+    public static synchronized void queue(Contact contact) {
+        PENDING.add(contact);
+    }
+
+    public static synchronized int flushPending() throws IOException {
+        int flushed = 0;
+        while (!PENDING.isEmpty()) {
+            Contact contact = PENDING.remove(0);
+            saveBorrow(
+                    contact.getStats().name(),
+                    contact.getName(),
+                    contact.getMoney(),
+                    contact.getPhoneNumber(),
+                    contact.getDueDate(),
+                    contact.getInterest(),
+                    contact.getNote()
+            );
+            flushed++;
+        }
+        return flushed;
+    }
+
+    public static void saveBorrow(String status,
+                                  String name,
+                                  double money,
+                                  String phone,
+                                  String dueDate,
+                                  double interest,
+                                  String note) throws IOException {
+        String id = nextIdForStatus(status);
+        String createdAt = LocalDateTime.now().toString();
+
+        DataStore.addLoan(new DataStore.Loan(
+                id,
+                status,
+                name,
+                money,
+                phone,
+                dueDate,
+                interest,
+                note,
+                createdAt
+        ));
+    }
+
+    // ====== Sinh ID tuần tự theo stats ======
+    private static synchronized String nextIdForStatus(String status) throws IOException {
+        String prefix = statusPrefix(status); // CoNo -> "Co", ChNo -> "Ch"
+
+        Properties p = new Properties();
+        if (Files.exists(COUNTER_PATH)) {
+            try (var in = Files.newInputStream(COUNTER_PATH)) { p.load(in); }
+        }
+        int last = Integer.parseInt(p.getProperty(prefix, "0"));
+        int next = last + 1;
+
+        p.setProperty(prefix, Integer.toString(next));
+        Files.createDirectories(COUNTER_PATH.getParent());
+        try (var out = Files.newOutputStream(COUNTER_PATH)) {
+            p.store(out, "ID counters per prefix (Co/Ch)");
+        }
+
+        return prefix + String.format("%0" + ID_WIDTH + "d", next);
+    }
+
+    private static String statusPrefix(String status) {
+        if (status == null) return "Co";
+        switch (status) {
+            case "CoNo": return "Co";
+            case "ChNo": return "Ch";
+            default:     return status.substring(0, Math.min(2, status.length()));
+        }
+    }
+}
