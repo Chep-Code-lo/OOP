@@ -1,12 +1,22 @@
 package app.account;
 
-import app.ui.*;
+import app.ui.ConsoleUtils;
+import java.util.Objects;
 import java.util.Scanner;
 
-
+/** Menu quản lý tài khoản, sử dụng AccountActions để thao tác nghiệp vụ. */
 public class AccountMenu {
+    private final FinanceManager financeManager;
+    private final AccountActions actions;
+    private final Scanner scanner;
 
-    public void showMenu(Scanner sc, FinanceManager fm) {
+    public AccountMenu(FinanceManager financeManager, Scanner scanner) {
+        this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
+        this.scanner = Objects.requireNonNull(scanner, "scanner");
+        this.actions = new AccountActions(this.financeManager, this.scanner);
+    }
+
+    public void showMenu() {
         while (true) {
             ConsoleUtils.clear();
             ConsoleUtils.printHeader("TÀI KHOẢN");
@@ -18,44 +28,36 @@ public class AccountMenu {
             System.out.print("Chọn (0-4): ");
 
             try {
-                switch(sc.nextLine().trim()){
-                    case "1"->{
-                        Actions.add(sc, fm);
-                        System.out.println("Nhấn Enter để quay lại menu...");
-                        sc.nextLine();
-                        break;
+                switch (scanner.nextLine().trim()) {
+                    case "1" -> {
+                        actions.addAccount();
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "2"->{
-                        Actions.rename(sc, fm);
-                        System.out.println("Nhấn Enter để quay lại menu...");
-                        sc.nextLine();
-                        break;
+                    case "2" -> {
+                        actions.renameAccount();
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "3"->{
-                        Actions.delete(sc, fm);
-                        System.out.println("Nhấn Enter để quay lại menu...");
-                        sc.nextLine();
-                        break;
+                    case "3" -> {
+                        actions.deleteAccount();
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "4"->{
+                    case "4" -> {
                         ConsoleUtils.clear();
                         ConsoleUtils.printHeader("DANH SÁCH TÀI KHOẢN");
-                        Actions.listAccounts(fm);
-                        System.out.print("Nhấn Enter để quay lại menu...");
-                        sc.nextLine();
-                        break;
+                        actions.listAccounts();
+                        ConsoleUtils.pause(scanner);
                     }
-                    case"0"-> {
+                    case "0" -> {
                         return;
-                    } 
-                    default->{
+                    }
+                    default -> {
                         System.out.println("Giá trị không hợp lệ. Vui lòng nhập số từ 0 đến 4.");
-                        ConsoleUtils.pause(sc);
+                        ConsoleUtils.pause(scanner);
                     }
                 }
             } catch (Exception e) {
                 System.out.println("Lỗi: " + e.getMessage());
-                ConsoleUtils.pause(sc);
+                ConsoleUtils.pause(scanner);
             }
         }
     }

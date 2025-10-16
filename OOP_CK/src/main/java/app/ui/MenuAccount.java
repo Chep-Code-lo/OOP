@@ -1,14 +1,25 @@
 package app.ui;
 
+import app.account.AccountMenu;
+import app.account.FinanceManager;
+import app.account.ReportMenu;
+import app.account.TransferMenu;
+import java.util.Objects;
 import java.util.Scanner;
 
-import app.account.*;
-
 public class MenuAccount {
-    private final FinanceManager fm;
+    private final FinanceManager financeManager;
+    private final Scanner scanner;
+    private final AccountMenu accountMenu;
+    private final TransferMenu transferMenu;
+    private final ReportMenu reportMenu;
 
-    public MenuAccount(FinanceManager fm) {
-        this.fm = fm;
+    public MenuAccount(FinanceManager financeManager, Scanner scanner) {
+        this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
+        this.scanner = Objects.requireNonNull(scanner, "scanner");
+        this.accountMenu = new AccountMenu(this.financeManager, this.scanner);
+        this.transferMenu = new TransferMenu(this.financeManager, this.scanner);
+        this.reportMenu = new ReportMenu(this.financeManager, this.scanner);
     }
 
     public void showMenu() {
@@ -22,50 +33,33 @@ public class MenuAccount {
             System.out.println("0) Thoát");
             System.out.print("Bạn muốn : ");
 
-            Scanner sc = new Scanner(System.in);
-
-            try{
-                switch(sc.nextLine().trim()) {
-                    case "1"->{
-                        AccountMenu m = new AccountMenu();
-                        m.showMenu(sc, fm);
-                        System.out.println("Nhấn Enter để quay lại menu...");
-                        sc.nextLine();
-                        break;
+            try {
+                switch (scanner.nextLine().trim()) {
+                    case "1" -> {
+                        accountMenu.showMenu();
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "2"->{
-                        TransferMenu m = new TransferMenu();
-                        m.showMenu(sc, fm);
-                        System.out.println("Nhấn Enter để quay lại menu...");
-                        sc.nextLine();
-                        break;
+                    case "2" -> {
+                        transferMenu.showMenu();
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "3"->{
-                        ReportMenu m = new ReportMenu();
-                        m.showBalances(sc, fm);
-                        System.out.println("Nhấn Enter để quay lại menu...");
-                        sc.nextLine();
-                        break;
+                    case "3" -> {
+                        reportMenu.showBalances();
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "4" ->{
-                        ReportMenu m = new ReportMenu();
-                        m.showReport(sc, fm);
-                        System.out.println("Nhấn Enter để quay lại menu...");
-                        sc.nextLine();
-                        break;
+                    case "4" -> {
+                        reportMenu.showReport();
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "0" ->{
+                    case "0" -> {
                         System.out.println("Tạm biệt!");
                         return;
                     }
-                    default ->{
-                        System.out.println("Lựa chọn không hợp lệ. Hãy nhập từ 0 đến 5!");
-                    }
+                    default -> System.out.println("Lựa chọn không hợp lệ. Hãy nhập từ 0 đến 5!");
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("!! Lỗi: " + e.getMessage());
-                ConsoleUtils.pause(sc);
+                ConsoleUtils.pause(scanner);
             }
         }
     }

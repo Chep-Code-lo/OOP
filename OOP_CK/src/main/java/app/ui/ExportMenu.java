@@ -1,11 +1,22 @@
 package app.ui;
-import app.loan.*;
-import app.export.*;
+
+import app.export.ExportAccounts;
+import app.export.ExportLoanPayments;
+import app.export.ExportLoans;
+import app.export.ExportTransactions;
+import app.loan.ContractStorage;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ExportMenu {
-    public void show(Scanner sc) {
-        while(true){
+    private final Scanner scanner;
+
+    public ExportMenu(Scanner scanner) {
+        this.scanner = Objects.requireNonNull(scanner, "scanner");
+    }
+
+    public void show() {
+        while (true) {
             ConsoleUtils.clear();
             ConsoleUtils.printHeader("LƯU DỮ LIỆU CSV");
             System.out.println("1. Lưu Tài khoản");
@@ -16,48 +27,47 @@ public class ExportMenu {
             System.out.println("0. Quay lại");
             System.out.print("Bạn muốn : ");
 
-            try{
-                switch (sc.nextLine().trim()) {
+            try {
+                switch (scanner.nextLine().trim()) {
                     case "1" -> {
                         save(() -> ExportAccounts.export(), "accounts.csv");
-                        ConsoleUtils.pause(sc);
+                        ConsoleUtils.pause(scanner);
                     }
                     case "2" -> {
                         save(() -> ExportTransactions.export(), "transactions.csv");
-                        ConsoleUtils.pause(sc);
+                        ConsoleUtils.pause(scanner);
                     }
                     case "3" -> {
                         save(() -> ExportLoans.export(), "loans.csv");
-                        ConsoleUtils.pause(sc);
+                        ConsoleUtils.pause(scanner);
                     }
                     case "4" -> {
                         save(() -> ExportLoanPayments.export(), "loan_payments.csv");
-                        ConsoleUtils.pause(sc);
+                        ConsoleUtils.pause(scanner);
                     }
                     case "5" -> {
                         save(() -> ExportAccounts.export(), "accounts.csv");
                         save(() -> ExportTransactions.export(), "transactions.csv");
                         save(() -> ExportLoans.export(), "loans.csv");
                         save(() -> ExportLoanPayments.export(), "loan_payments.csv");
-                        ConsoleUtils.pause(sc);
+                        ConsoleUtils.pause(scanner);
                     }
                     case "0" -> {
-                        return; 
+                        return;
                     }
                     default -> {
                         System.out.println("Lựa chọn không hợp lệ. Hãy nhập từ 1 đến 6!");
-                        ConsoleUtils.pause(sc);
+                        ConsoleUtils.pause(scanner);
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("!! Lỗi: " + e.getMessage());
-                ConsoleUtils.pause(sc);
+                ConsoleUtils.pause(scanner);
             }
         }
     }
 
-    private static void save(Saver saver, String name){
+    private void save(Saver saver, String name) {
         try {
             int flushed = ContractStorage.flushPending();
             if (flushed > 0) {

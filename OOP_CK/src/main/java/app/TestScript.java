@@ -40,7 +40,7 @@ public final class TestScript {
                 n
 
                 0
-                """, () -> new AccountMenu().showMenu(new Scanner(System.in), fm));
+                """, () -> new AccountMenu(fm, new Scanner(System.in)).showMenu());
         pause("Đã tạo tài khoản BankDemo");
 
         runWithInput("""
@@ -50,7 +50,7 @@ public final class TestScript {
                 n
 
                 0
-                """, () -> new AccountMenu().showMenu(new Scanner(System.in), fm));
+                """, () -> new AccountMenu(fm, new Scanner(System.in)).showMenu());
         pause("Đã tạo tài khoản WalletDemo");
 
         // 2. Nạp thu vào BankDemo
@@ -67,7 +67,7 @@ public final class TestScript {
                 1000
                 Chuyển sang ví
                 2
-                """, bankId, walletId), () -> new TransferMenu().showMenu(new Scanner(System.in), fm));
+                """, bankId, walletId), () -> new TransferMenu(fm, new Scanner(System.in)).showMenu());
         pause("Đã chuyển 1000 từ BankDemo sang WalletDemo");
 
         // 4. Ghi một giao dịch chi thông qua TransactionService/App
@@ -77,10 +77,10 @@ public final class TestScript {
         pause("Đã chi 250 từ WalletDemo");
 
         // 5. Hiển thị số dư và báo cáo
-        new ReportMenu().showBalances(new Scanner(System.in), fm);
+        new ReportMenu(fm, new Scanner(System.in)).showBalances();
         pause("Kiểm tra số dư");
 
-        runWithInput("1\n\n0\n", () -> new ReportMenu().showReport(new Scanner(System.in), fm));
+        runWithInput("1\n\n0\n", () -> new ReportMenu(fm, new Scanner(System.in)).showReport());
         pause("Xem báo cáo thu chi tổng");
 
         // 6. Ghi một khoản vay cơ bản
@@ -103,11 +103,11 @@ public final class TestScript {
         pause("Đã xuất CSV accounts và transactions");
 
         // 8. Chạy menu Export để sử dụng cùng logic console (demo option 5 và quay lại)
-        runWithInput("5\n\n0\n", () -> new ExportMenu().show(new Scanner(System.in)));
+        runWithInput("5\n\n0\n", () -> new ExportMenu(new Scanner(System.in)).show());
         pause("Đã chạy menu Export");
 
         // 9. Chạy menu khoản vay gốc với ContactMenu (đã thực hiện ở trên) + show menu chung
-        runWithInput("0\n", () -> new MenuLoan().showMenu(new Scanner(System.in)));
+        runWithInput("0\n", () -> new MenuLoan(new Scanner(System.in)).showMenu());
         pause("Đã chạy MenuLoan (thoát ngay)");
 
         System.out.println("=== KẾT THÚC TEST FULL CHỨC NĂNG ===");

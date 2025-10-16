@@ -1,19 +1,22 @@
 package app.ui;
 
 import app.account.FinanceManager;
-import app.transaction.*;
+import app.transaction.App;
+import app.transaction.TransactionService;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Menutransaction {
     private final App app;
+    private final Scanner scanner;
 
-    public Menutransaction(FinanceManager fm) {
-        TransactionService service = new TransactionService(fm);
+    public Menutransaction(FinanceManager financeManager, Scanner scanner) {
+        TransactionService service = new TransactionService(Objects.requireNonNull(financeManager, "financeManager"));
         this.app = new App(service);
+        this.scanner = Objects.requireNonNull(scanner, "scanner");
     }
 
     public void showMenu() {
-        Scanner sc = new Scanner(System.in);
         while (true) {
             ConsoleUtils.clear();
             ConsoleUtils.printHeader("QUẢN LÝ GIAO DỊCH");
@@ -26,44 +29,39 @@ public class Menutransaction {
             System.out.print("Bạn muốn :  ");
 
             try {
-                switch (sc.nextLine().trim()) {
-                    case "1"->{
+                switch (scanner.nextLine().trim()) {
+                    case "1" -> {
                         app.showBalances();
-                        ConsoleUtils.pause(sc);
-                        break;
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "2"->{
-                        app.addTxCLI(sc);
-                        ConsoleUtils.pause(sc);
-                        break;
+                    case "2" -> {
+                        app.addTxCLI(scanner);
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "3"->{
-                        app.listTxCLI(sc);
-                        ConsoleUtils.pause(sc);
-                        break;
+                    case "3" -> {
+                        app.listTxCLI(scanner);
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "4"->{
-                        app.editTxCLI(sc);
-                        ConsoleUtils.pause(sc);
-                        break;
+                    case "4" -> {
+                        app.editTxCLI(scanner);
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "5"->{
-                        app.deleteTxCLI(sc);
-                        ConsoleUtils.pause(sc);
-                        break;
+                    case "5" -> {
+                        app.deleteTxCLI(scanner);
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "0"->{
+                    case "0" -> {
                         System.out.println("Bye!");
                         return;
                     }
-                    default->{
+                    default -> {
                         System.out.println("Lựa chọn không hợp lệ. Hãy nhập từ 1 đến 6!");
-                        ConsoleUtils.pause(sc);
+                        ConsoleUtils.pause(scanner);
                     }
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("!! Lỗi: " + e.getMessage());
-                ConsoleUtils.pause(sc);
+                ConsoleUtils.pause(scanner);
             }
         }
     }

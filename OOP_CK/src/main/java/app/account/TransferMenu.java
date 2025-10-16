@@ -1,18 +1,27 @@
 package app.account;
 
-import app.ui.*;
+import app.ui.ConsoleUtils;
+import java.util.Objects;
 import java.util.Scanner;
 
-/** Menu 2: Chuyển khoản giữa các tài khoản - format showMenu(Scanner, FinanceManager). */
+/** Menu chuyển khoản giữa các tài khoản. */
 public class TransferMenu {
+    private final FinanceManager financeManager;
+    private final AccountActions actions;
+    private final Scanner scanner;
 
-    public void showMenu(Scanner sc, FinanceManager fm) {
+    public TransferMenu(FinanceManager financeManager, Scanner scanner) {
+        this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
+        this.scanner = Objects.requireNonNull(scanner, "scanner");
+        this.actions = new AccountActions(this.financeManager, this.scanner);
+    }
+
+    public void showMenu() {
         while (true) {
             ConsoleUtils.clear();
             ConsoleUtils.printHeader("CHUYỂN KHOẢN");
 
-            // cần tối thiểu 2 tài khoản ====
-            int count = fm.listAccounts().size();
+            int count = financeManager.listAccounts().size();
             if (count < 2) {
                 if (count == 0) {
                     System.out.println("(Chưa có tài khoản nào. Vào menu 1 để tạo tài khoản trước.)");
@@ -20,35 +29,30 @@ public class TransferMenu {
                     System.out.println("(Chỉ có 1 tài khoản. Cần ít nhất 2 tài khoản để chuyển khoản.)");
                 }
                 System.out.print("\nNhấn Enter để quay lại...");
-                sc.nextLine();
+                scanner.nextLine();
                 return;
             }
 
             System.out.println("1) Thực hiện chuyển khoản");
             System.out.println("2) Quay lại menu chính");
             System.out.print("Bạn muốn: ");
-            String choice = sc.nextLine().trim();
+            String choice = scanner.nextLine().trim();
 
-            try{
+            try {
                 switch (choice) {
-                    case "1"->{
-                        Actions.doTransfer(sc, fm);
-                        break;
-                    }
-                    case "2"->{
+                    case "1" -> actions.transferBetweenAccounts();
+                    case "2" -> {
                         return;
                     }
-                    default->{
+                    default -> {
                         System.out.println("Lựa chọn không hợp lệ. Nhấn Enter để thử lại...");
-                        sc.nextLine();
+                        ConsoleUtils.pause(scanner);
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("!! Lỗi: " + e.getMessage());
-                ConsoleUtils.pause(sc);
+                ConsoleUtils.pause(scanner);
             }
         }
     }
-
 }

@@ -1,33 +1,44 @@
 package app.account;
-import app.ui.*;
+
+import app.ui.ConsoleUtils;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
 
+/** Menu hiển thị số dư và báo cáo thu chi. */
 public class ReportMenu {
+    private final FinanceManager financeManager;
+    private final Scanner scanner;
 
-    /** Hiển thị số dư từng tài khoản  */
-    public void showBalances(Scanner sc, FinanceManager fm) {
-        ConsoleUtils.printHeader("SỐ DƯ TỪNG TÀI KHOẢN"); // tự clear trước khi in
-        if (fm.listAccounts().isEmpty()) {
+    public ReportMenu(FinanceManager financeManager, Scanner scanner) {
+        this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
+        this.scanner = Objects.requireNonNull(scanner, "scanner");
+    }
+
+    /** In danh sách số dư cho từng tài khoản. */
+    public void showBalances() {
+        ConsoleUtils.printHeader("SỐ DƯ TỪNG TÀI KHOẢN");
+        if (financeManager.listAccounts().isEmpty()) {
             System.out.println("(Chưa có tài khoản nào. Vào mục 1 để tạo tài khoản trước.)");
             return;
         }
-        fm.listAccounts().forEach(a ->
+        financeManager.listAccounts().forEach(a ->
                 System.out.printf("• %s | ID=%s | Số dư=%s VND%n",
                         a.getName(), a.getId(), a.getBalance().toPlainString())
         );
     }
 
-    /** Menu báo cáo thu/chi: TẤT CẢ hoặc 1 TÀI KHOẢN. */
-    public void showReport(Scanner sc, FinanceManager fm) {
+    /** Trình đơn báo cáo thu chi theo tất cả tài khoản hoặc một tài khoản cụ thể. */
+    public void showReport() {
         while (true) {
             ConsoleUtils.printHeader("BÁO CÁO THU/CHI");
 
-            //chưa có tài khoản -> báo và quay lại
-            if (fm.listAccounts().isEmpty()) {
+            if (financeManager.listAccounts().isEmpty()) {
                 System.out.println("(Chưa có tài khoản nào. Vào mục 1 để tạo tài khoản trước.)");
-                ConsoleUtils.pause(sc);
-                return; // QUAN TRỌNG
+                ConsoleUtils.pause(scanner);
+                return;
             }
 
             System.out.println("1) Tất cả tài khoản");
@@ -36,57 +47,54 @@ public class ReportMenu {
             System.out.print("Chọn: ");
 
             try {
-                switch (sc.nextLine().trim()) {
-                    case "1": {
-                        // TỔNG HỢP TẤT CẢ TÀI KHOẢN
-                        Map<String, BigDecimal> rpt = fm.getReportService().summaryAll();
-                        printSummary(rpt);
-                        ConsoleUtils.pause(sc);
-                        break;
+                switch (scanner.nextLine().trim()) {
+                    case "1" -> {
+                        Map<String, BigDecimal> report = financeManager.getReportService().summaryAll();
+                        printSummary(report);
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "2": {
-                        // Liệt kê & chọn tài khoản
-                        fm.listAccounts().forEach(a ->
+                    case "2" -> {
+                        financeManager.listAccounts().forEach(a ->
                                 System.out.printf("• %s | ID=%s%n", a.getName(), a.getId())
                         );
                         System.out.print("Nhập ID tài khoản: ");
-                        String id = sc.nextLine().trim();
+                        String id = scanner.nextLine().trim();
 
-                        boolean exists = fm.listAccounts().stream().anyMatch(a -> a.getId().equals(id));
+                        boolean exists = financeManager.listAccounts().stream().anyMatch(a -> a.getId().equals(id));
                         if (!exists) {
                             System.out.println("Không tìm thấy tài khoản: " + id);
-                            ConsoleUtils.pause(sc);
+                            ConsoleUtils.pause(scanner);
                             break;
                         }
-
-                        Map<String, BigDecimal> rpt = fm.getReportService().summaryForAccount(id);
-                        printSummary(rpt);
-                        ConsoleUtils.pause(sc);
-                        break;
+                        Map<String, BigDecimal> report = financeManager.getReportService()
+                                .summaryForAccount(id);
+                        printSummary(report);
+                        ConsoleUtils.pause(scanner);
                     }
-                    case "0":
+                    case "0" -> {
                         return;
-                    default:
+                    }
+                    default -> {
                         System.out.println("Chỉ nhận 0–2.");
-                        ConsoleUtils.pause(sc);
+                        ConsoleUtils.pause(scanner);
+                    }
                 }
             } catch (Exception e) {
                 System.out.println("Lỗi : " + e.getMessage());
-                ConsoleUtils.pause(sc);
+                ConsoleUtils.pause(scanner);
             }
         }
     }
 
-    // ===== Helpers =====
-
-    private void printSummary(Map<String, BigDecimal> rpt) {
-        BigDecimal income  = rpt.getOrDefault("income",  BigDecimal.ZERO);
+    private void printSummary(Map<String, BigDecimal> report) {
+        Map<String, BigDecimal> rpt = (report == null) ? Collections.emptyMap() : report;
+        BigDecimal income = rpt.getOrDefault("income", BigDecimal.ZERO);
         BigDecimal expense = rpt.getOrDefault("expense", BigDecimal.ZERO);
-        BigDecimal net     = rpt.getOrDefault("net",     BigDecimal.ZERO);
+        BigDecimal net = rpt.getOrDefault("net", BigDecimal.ZERO);
 
         System.out.println("\n--- KẾT QUẢ ---");
-        System.out.println("Tổng THU   : " + income.toPlainString()  + " VND");
+        System.out.println("Tổng THU   : " + income.toPlainString() + " VND");
         System.out.println("Tổng CHI   : " + expense.toPlainString() + " VND");
-        System.out.println("Chênh lệch : " + net.toPlainString()     + " VND");
+        System.out.println("Chênh lệch : " + net.toPlainString() + " VND");
     }
 }

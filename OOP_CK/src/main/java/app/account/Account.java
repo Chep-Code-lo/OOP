@@ -86,28 +86,4 @@ public abstract class Account {
                 .substring(0, 8)
                 .toUpperCase();
     }
-    
-    protected static BigDecimal readAmount(Scanner sc, String prompt) {
-        System.out.println("(Chỉ nhập số nguyên > 0; KHÔNG dùng dấu chấm/phẩy/khoảng trắng)");
-        while (true) {
-            System.out.print(prompt);
-            String s = sc.nextLine().trim();
-            if (s.isEmpty()) { System.out.println("Không được để trống."); continue; }
-
-            // chỉ chấp nhận toàn chữ số
-            boolean allDigits = true;
-            for (int i = 0; i < s.length(); i++) {
-                if (!Character.isDigit(s.charAt(i))) { allDigits = false; break; }
-            }
-            if (!allDigits) { System.out.println("Chỉ nhập số (0–9)."); continue; }
-
-            try {
-                BigDecimal v = new BigDecimal(s);
-                if (v.signum() > 0) return v;
-                System.out.println("Số tiền phải > 0.");
-            } catch (NumberFormatException e) {
-                System.out.println("Số tiền không hợp lệ.");
-            }
-        }
-    }
 }
