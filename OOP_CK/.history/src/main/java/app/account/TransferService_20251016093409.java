@@ -16,7 +16,7 @@ public class TransferService {
     /** Callback để lấy Account theo id (tránh lệ thuộc cấu trúc lưu trữ cụ thể). */
     private final Function<String, Account> accountResolver;
 
-    protected TransferService(Ledger ledger, Function<String, Account> accountResolver) {
+    private TransferService(Ledger ledger, Function<String, Account> accountResolver) {
         this.ledger = Objects.requireNonNull(ledger, "ledger");
         this.accountResolver = Objects.requireNonNull(accountResolver, "accountResolver");
     }

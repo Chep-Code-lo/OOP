@@ -6,7 +6,7 @@ import java.util.Scanner;
 import app.ui.ConsoleUtils;
 
 public class Actions {
-     protected static void add(Scanner sc, FinanceManager fm) {
+     public static void add(Scanner sc, FinanceManager fm) {
         System.out.println("Chọn loại: 1-Ngân hàng, 2-Ví điện tử");
         int type = ConsoleUtils.readIntInRange(sc, "Loại: ", 1, 2);
         String name = ConsoleUtils.readLine(sc, "Tên tài khoản: ");
@@ -25,7 +25,7 @@ public class Actions {
         System.out.println("Đã thêm tài khoản.");
     }
 
-    protected static void rename(Scanner sc, FinanceManager fm) {
+    public static void rename(Scanner sc, FinanceManager fm) {
         if (fm.listAccounts().isEmpty()) {
             System.out.println("Chưa có tài khoản nào. Vào menu 'Thêm tài khoản' để tạo mới.");
             return;
@@ -44,7 +44,7 @@ public class Actions {
         System.out.println("Đã đổi tên tài khoản.");
     }
 
-    protected static void delete(Scanner sc, FinanceManager fm) {
+    public static void delete(Scanner sc, FinanceManager fm) {
         if (fm.listAccounts().isEmpty()) {
             System.out.println("Chưa có tài khoản nào. Vào menu 'Thêm tài khoản' để tạo mới.");
             return;
@@ -54,7 +54,7 @@ public class Actions {
         System.out.println("Đã xóa tài khoản.");
     }
 
-    protected static void listAccounts(FinanceManager fm) {
+    public static void listAccounts(FinanceManager fm) {
         var list = fm.listAccounts();
         if (list.isEmpty()) {
             System.out.println("Chưa có tài khoản nào. Vào menu 'Thêm tài khoản' để tạo mới.");
@@ -68,7 +68,7 @@ public class Actions {
 
     
     // Thực hiện quy trình chuyển khoản
-    protected static void doTransfer(Scanner sc, FinanceManager fm) {
+    public static void doTransfer(Scanner sc, FinanceManager fm) {
         // (Phòng hờ) Nếu số tài khoản < 2, báo và quay lại
         if (fm.listAccounts().size() < 2) {
             System.out.println("(Cần ít nhất 2 tài khoản để chuyển khoản.)");
@@ -117,12 +117,12 @@ public class Actions {
     }
 
     // ===== Helpers =====
-    private static boolean hasAccount(FinanceManager fm, String id) {
+    public static boolean hasAccount(FinanceManager fm, String id) {
         return fm.listAccounts().stream().anyMatch(a -> a.getId().equals(id));
     }
 
     /** Lấy số dư của tài khoản theo ID (giả định ID hợp lệ). */
-    private static BigDecimal getBalanceById(FinanceManager fm, String id) {
+    public static BigDecimal getBalanceById(FinanceManager fm, String id) {
         return fm.listAccounts().stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst()
@@ -131,7 +131,7 @@ public class Actions {
     }
 
     /** Đọc ID tài khoản; nếu không tồn tại thì hỏi nhập lại (y) hoặc thoát (n). Trả về null nếu thoát. */
-    private static String readAccountIdOrCancel(Scanner sc, FinanceManager fm, String prompt, String role) {
+    protected static String readAccountIdOrCancel(Scanner sc, FinanceManager fm, String prompt, String role) {
         while (true) {
             System.out.print(prompt);
             String id = sc.nextLine().trim();
@@ -153,7 +153,7 @@ public class Actions {
     }
 
     /** Đọc BigDecimal > 0; nếu > max thì báo “Số dư không đủ” và yêu cầu nhập lại. */
-    private static BigDecimal readAmountMax(Scanner sc, String prompt, BigDecimal max) {
+    protected static BigDecimal readAmountMax(Scanner sc, String prompt, BigDecimal max) {
         while (true) {
             BigDecimal v = Account.readAmount(sc, prompt);
             if (v.compareTo(max) <= 0) return v;

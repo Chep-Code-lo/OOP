@@ -4,6 +4,7 @@ import app.account.FinanceManager;
 import app.ui.*;
 import java.util.Scanner;
 
+/** Điểm vào chính: điều phối các menu con trong ứng dụng. */
 public class App {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);

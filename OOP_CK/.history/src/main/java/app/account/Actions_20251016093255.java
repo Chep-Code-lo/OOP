@@ -6,7 +6,7 @@ import java.util.Scanner;
 import app.ui.ConsoleUtils;
 
 public class Actions {
-     protected static void add(Scanner sc, FinanceManager fm) {
+     private static void add(Scanner sc, FinanceManager fm) {
         System.out.println("Chọn loại: 1-Ngân hàng, 2-Ví điện tử");
         int type = ConsoleUtils.readIntInRange(sc, "Loại: ", 1, 2);
         String name = ConsoleUtils.readLine(sc, "Tên tài khoản: ");
@@ -25,7 +25,7 @@ public class Actions {
         System.out.println("Đã thêm tài khoản.");
     }
 
-    protected static void rename(Scanner sc, FinanceManager fm) {
+    private static void rename(Scanner sc, FinanceManager fm) {
         if (fm.listAccounts().isEmpty()) {
             System.out.println("Chưa có tài khoản nào. Vào menu 'Thêm tài khoản' để tạo mới.");
             return;
@@ -44,7 +44,7 @@ public class Actions {
         System.out.println("Đã đổi tên tài khoản.");
     }
 
-    protected static void delete(Scanner sc, FinanceManager fm) {
+    private static void delete(Scanner sc, FinanceManager fm) {
         if (fm.listAccounts().isEmpty()) {
             System.out.println("Chưa có tài khoản nào. Vào menu 'Thêm tài khoản' để tạo mới.");
             return;
@@ -54,7 +54,7 @@ public class Actions {
         System.out.println("Đã xóa tài khoản.");
     }
 
-    protected static void listAccounts(FinanceManager fm) {
+    private static void listAccounts(FinanceManager fm) {
         var list = fm.listAccounts();
         if (list.isEmpty()) {
             System.out.println("Chưa có tài khoản nào. Vào menu 'Thêm tài khoản' để tạo mới.");
@@ -68,7 +68,7 @@ public class Actions {
 
     
     // Thực hiện quy trình chuyển khoản
-    protected static void doTransfer(Scanner sc, FinanceManager fm) {
+    private static void doTransfer(Scanner sc, FinanceManager fm) {
         // (Phòng hờ) Nếu số tài khoản < 2, báo và quay lại
         if (fm.listAccounts().size() < 2) {
             System.out.println("(Cần ít nhất 2 tài khoản để chuyển khoản.)");
