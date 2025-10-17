@@ -46,8 +46,10 @@ public final class DataStore {
         public static final String NAME = "name";
         public static final String AMOUNT = "amount";
         public static final String PHONE = "phone";
+        public static final String BORROW_DATE = "borrowDate";
         public static final String DUE_DATE = "dueDate";
         public static final String INTEREST = "interest";
+        public static final String TYPE = "interestType";
         public static final String NOTE = "note";
         public static final String CREATED_AT = "createdAt";
     }
@@ -111,9 +113,23 @@ public final class DataStore {
     }
 
     // ======= API: Khoản vay (giữ dạng Map generic) =======
-    public static void addLoan(Map<String, Object> row) {
-        LOANS.add(snapshotLoan(row));
+    public static void upsertLoan(Map<String, Object> row) {
+        Map<String, Object> snapshot = snapshotLoan(row);
+        String id = (String) snapshot.get(LoanFields.ID);
+        replaceFirst(LOANS, r -> Objects.equals(r.get(LoanFields.ID), id), snapshot);
     }
+
+    public static void removeLoanById(String id) {
+        LOANS.removeIf(r -> Objects.equals(r.get(LoanFields.ID), id));
+    }
+
+    public static void replaceLoans(List<Map<String, Object>> rows) {
+        LOANS.clear();
+        for (Map<String, Object> row : rows) {
+            LOANS.add(snapshotLoan(row));
+        }
+    }
+
     public static void addLoanPayment(Map<String, Object> row) {
         LOAN_PAYMENTS.add(snapshotLoanPayment(row));
     }
@@ -170,8 +186,10 @@ public final class DataStore {
         copy.put(LoanFields.NAME, row.getOrDefault(LoanFields.NAME, ""));
         copy.put(LoanFields.AMOUNT, row.getOrDefault(LoanFields.AMOUNT, ""));
         copy.put(LoanFields.PHONE, row.getOrDefault(LoanFields.PHONE, ""));
+        copy.put(LoanFields.BORROW_DATE, row.getOrDefault(LoanFields.BORROW_DATE, ""));
         copy.put(LoanFields.DUE_DATE, row.getOrDefault(LoanFields.DUE_DATE, ""));
         copy.put(LoanFields.INTEREST, row.getOrDefault(LoanFields.INTEREST, ""));
+        copy.put(LoanFields.TYPE, row.getOrDefault(LoanFields.TYPE, ""));
         copy.put(LoanFields.NOTE, row.getOrDefault(LoanFields.NOTE, ""));
         copy.put(LoanFields.CREATED_AT, row.getOrDefault(LoanFields.CREATED_AT, ""));
         return Collections.unmodifiableMap(copy);

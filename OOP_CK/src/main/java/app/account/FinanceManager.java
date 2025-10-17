@@ -53,6 +53,7 @@ public class FinanceManager {
         accountIndex.remove(id);
         accountStore.removeIf(row -> Objects.equals(row.get(Account.KEY_ID), id));
         DataStore.removeAccountById(id);
+        AccountCsvStorage.persist(DataStore.accounts());
     }
 
     /** Ghi nhận khoản thu (và trả về giao dịch tương ứng) cho 1 tài khoản. */
@@ -128,6 +129,7 @@ public class FinanceManager {
         row.put(DataStore.AccountFields.NOTE, "");
         DataStore.upsertAccount(row);
         DataStore.updateTransactionsAccountName(account.getId(), account.getName());
+        AccountCsvStorage.persist(DataStore.accounts());
     }
 
     private String resolveAccountType(Account account) {

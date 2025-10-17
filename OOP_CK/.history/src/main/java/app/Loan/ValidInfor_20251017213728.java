@@ -1,9 +1,6 @@
 package app.loan;
-
-import app.ui.*;
-/** Bộ kiểm tra ràng buộc cho Contact và các trường phát sinh. */
-public class ContactValidator {
-    private ContactValidator() {}
+public class ValidInfor {
+    private ValidInfor() {}
 
     public static boolean isValidPhone10(String s){
         return s != null && s.matches("^0\\d{9}$");
@@ -13,17 +10,20 @@ public class ContactValidator {
         return v >= 0;
     }
 
-    /** Kiểm tra toàn bộ thuộc tính Contact và ném lỗi nếu phát hiện sai. */
-    public static void validate(Contact c){
+    public static void validate(Contract c){
         if (c.getName() == null || c.getName().isBlank())
             throw new IllegalArgumentException("Tên không được để trống");
-        if (!isNonNegative(c.getMoney()))
-            throw new IllegalArgumentException("Số tiền phải ≥ 0");
+        //TODO: tạo hàm check money nha =)))) mãi iu
+//        if (!isNonNegative(c.getMoney()))
+//            throw new IllegalArgumentException("Số tiền phải ≥ 0");
         if (!isValidPhone10(c.getPhoneNumber()))
             throw new IllegalArgumentException("Số điện thoại phải đúng 10 chữ số");
-        if (!DateUtils.isValidDDMMYY(c.getDueDate()))
+        if (!CheckInfor.DateUtils.isValidDDMMYY(c.getTraDate()))
+            throw new IllegalArgumentException("Ngày hạn (DD/MM/YYYY) không hợp lệ");
+        if(!CheckInfor.DateUtils.isValidDDMMYY(c.getVayDate()))
             throw new IllegalArgumentException("Ngày hạn (DD/MM/YYYY) không hợp lệ");
         if (!isNonNegative(c.getInterest()))
             throw new IllegalArgumentException("Lãi suất phải ≥ 0");
     }
+
 }

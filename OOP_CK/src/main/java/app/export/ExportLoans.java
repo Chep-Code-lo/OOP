@@ -10,7 +10,7 @@ public final class ExportLoans {
     public static Path export() throws Exception {
         String[] headers = {
             "ID","Trạng thái","Tên liên hệ","Số tiền","Số điện thoại",
-            "Hạn trả","Lãi suất","Ghi chú","Thời điểm tạo"
+            "Ngày tạo hợp đồng","Hạn trả","Lãi suất","Loại lãi","Ghi chú","Thời điểm tạo"
         };
         List<String[]> rows = new ArrayList<>();
         for (var l : DataStore.loans()) {
@@ -21,8 +21,10 @@ public final class ExportLoans {
                 value(l, DataStore.LoanFields.NAME),
                 amount.isBlank() ? "" : amount + " VND",
                 value(l, DataStore.LoanFields.PHONE),
+                value(l, DataStore.LoanFields.BORROW_DATE),
                 value(l, DataStore.LoanFields.DUE_DATE),
                 value(l, DataStore.LoanFields.INTEREST),
+                value(l, DataStore.LoanFields.TYPE),
                 value(l, DataStore.LoanFields.NOTE),
                 value(l, DataStore.LoanFields.CREATED_AT)
             });
