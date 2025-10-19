@@ -39,6 +39,19 @@ public final class TestRunner {
         requireEquals(ts.getBalance(walletId), new BigDecimal("380.00"),
                 "Wallet balance after recording expense");
 
+        // ===== Negative tests =====
+        expectThrows(IllegalStateException.class, () ->
+                ts.addTransaction(walletId, TxnType.EXPENSE, new BigDecimal("1000"),
+                        LocalDate.now(), "Overspend", "Should fail"));
+        requireEquals(ts.getBalance(walletId), new BigDecimal("380.00"),
+                "Wallet balance unchanged after failed expense");
+
+        expectThrows(IllegalStateException.class, () ->
+                fm.transfer(walletId, bankId, new BigDecimal("1000"),
+                        Instant.now(), "Overdraft transfer"));
+        requireEquals(fm.requireAccount(walletId).getBalance(), new BigDecimal("380.00"),
+                "Wallet balance unchanged after failed transfer");
+
         requireTrue(DataStore.transactions().size() >= 1, "DataStore should contain at least one transaction");
 
         ExportAccounts.export();
@@ -56,5 +69,18 @@ public final class TestRunner {
 
     private static void requireTrue(boolean condition, String message) {
         if (!condition) throw new AssertionError(message);
+    }
+
+    private static void expectThrows(Class<? extends Throwable> type, Runnable block) {
+        try {
+            block.run();
+        } catch (Throwable t) {
+            if (type.isInstance(t)) {
+                return;
+            }
+            throw new AssertionError("Expected exception " + type.getSimpleName()
+                    + " but caught " + t.getClass().getSimpleName(), t);
+        }
+        throw new AssertionError("Expected exception " + type.getSimpleName() + " but nothing was thrown");
     }
 }

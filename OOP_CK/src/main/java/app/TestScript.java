@@ -3,6 +3,7 @@ package app;
 import app.App;
 import app.account.BankAccount;
 import app.account.FinanceManager;
+import app.account.TxnType;
 import app.export.ExportAccounts;
 import app.export.ExportLoans;
 import app.export.ExportTransactions;
@@ -103,6 +104,11 @@ public final class TestScript {
                         0
                         """, () -> new AccountMenu(fm, new Scanner(System.in)).showMenu()));
 
+        runStep("Nạp thêm thu vào Bank và Wallet", passed, failed, () -> {
+            fm.addIncome(bankId[0], new BigDecimal("4000"), Instant.now(), "Seed bank");
+            fm.addIncome(walletId[0], new BigDecimal("1500"), Instant.now(), "Seed wallet");
+        });
+
         runStep("Chuyển khoản 1000 từ Bank sang Wallet qua menu", passed, failed, () ->
                 runWithInput(String.format("""
                         1
@@ -113,9 +119,25 @@ public final class TestScript {
                         2
                         """, bankId[0], walletId[0]), () -> new TransferMenu(fm, new Scanner(System.in)).showMenu()));
 
-        runStep("Nạp thêm thu vào Bank và Wallet", passed, failed, () -> {
-            fm.addIncome(bankId[0], new BigDecimal("4000"), Instant.now(), "Seed bank");
-            fm.addIncome(walletId[0], new BigDecimal("1500"), Instant.now(), "Seed wallet");
+        runStep("Không thể chi vượt số dư (kiểm tra dịch vụ)", passed, failed, () -> {
+            BigDecimal before = fm.requireAccount(walletId[0]).getBalance();
+            expectThrows(IllegalStateException.class, () ->
+                    txService.addTransaction(walletId[0], TxnType.EXPENSE,
+                            before.add(new BigDecimal("1.00")),
+                            LocalDate.now(),
+                            "Overspend", "Should fail"));
+            ensure(fm.requireAccount(walletId[0]).getBalance().compareTo(before) == 0,
+                    "Số dư thay đổi sau khi ghi nhận chi thất bại");
+        });
+
+        runStep("Không thể chuyển vượt hạn mức (kiểm tra dịch vụ)", passed, failed, () -> {
+            BigDecimal beforeSrc = fm.requireAccount(walletId[0]).getBalance();
+            expectThrows(IllegalStateException.class, () ->
+                    fm.transfer(walletId[0], bankId[0],
+                            beforeSrc.add(new BigDecimal("1.00")),
+                            Instant.now(), "Overdraft transfer"));
+            ensure(fm.requireAccount(walletId[0]).getBalance().compareTo(beforeSrc) == 0,
+                    "Số dư nguồn thay đổi sau khi chuyển thất bại");
         });
 
         runStep("Không thể xóa tài khoản khi còn số dư", passed, failed, () ->
@@ -328,9 +350,10 @@ public final class TestScript {
             System.out.println("[PASS] " + name);
             passed.add(name);
         } catch (Throwable t) {
-            System.out.println("[FAIL] " + name + ": " + t.getMessage());
+            String detail = name + " => " + t.getClass().getSimpleName() + ": " + (t.getMessage() == null ? "(không thông điệp)" : t.getMessage());
+            System.out.println("[FAIL] " + detail);
             t.printStackTrace(System.out);
-            failed.add(name);
+            failed.add(detail);
         } finally {
             try {
                 Thread.sleep(DELAY_MS);
