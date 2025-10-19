@@ -1,0 +1,21 @@
+# Dockerfile to build a Linux native binary using GraalVM native-image
+# Note: This produces a Linux executable, not a Windows .exe.
+# Usage:
+#  docker build -f build/Dockerfile.native -t oop-native .
+#  docker create --name extract oop-native
+#  docker cp extract:/work/oop_ck ./build/oop_ck
+#  docker rm extract
+
+ARG GRAALVM_IMAGE=ghcr.io/graalvm/graalvm-ce:latest
+FROM ${GRAALVM_IMAGE}
+
+WORKDIR /work
+COPY app.jar /work/app.jar
+
+# Install native-image component
+RUN gu install native-image || true
+
+# Build native image (Linux binary)
+RUN native-image --no-fallback -jar app.jar -H:Name=oop_ck
+
+CMD ["/work/oop_ck"]

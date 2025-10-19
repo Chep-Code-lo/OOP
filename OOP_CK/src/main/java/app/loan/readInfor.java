@@ -1,8 +1,9 @@
 package app.loan;
+
 import java.util.Scanner;
 
-public final class readInfor{
-    private readInfor() {}
+public final class ReadInfor {
+    private ReadInfor() {}
 
     public static double readPositiveDouble(Scanner sc, String prompt){
         while (true) {

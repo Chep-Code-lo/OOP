@@ -1,0 +1,5 @@
+;!@Install@!UTF-8!
+Title="OOP_CK Portable"
+BeginPrompt="This will extract OOP_CK Portable. Continue?"
+RunProgram="\"%T%\\OOP_CK_Portable\\OOP_CK_Portable.exe\""
+;!@InstallEnd@!

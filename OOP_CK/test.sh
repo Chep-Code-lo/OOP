@@ -18,11 +18,11 @@ if [[ -z "$JAVA_CMD" ]]; then
 fi
 
 printf 'Running functional tests...\n'
-"$JAVA_CMD" -cp out app.TestRunner
+"$JAVA_CMD" -cp out app.dev.TestRunner
 
 printf 'Running scripted UI demo...\n'
-"$JAVA_CMD" -cp out app.TestScript
+"$JAVA_CMD" -cp out app.dev.TestScript
 
 printf 'Running CLI smoke test...\n'
-"$JAVA_CMD" -cp out app.App <<<'0'
+"$JAVA_CMD" -cp out app.main.App <<<'0'
 printf '\nAll tests completed successfully.\n'

@@ -1,0 +1,18 @@
+OOP_CK Distribution
+
+Included files:
+- app.jar             (runnable JAR)
+- installer/          (native Windows installer created by jpackage)
+
+How to run the JAR:
+1. Make sure Java is installed (JRE 17+ recommended).
+2. Open PowerShell in this folder and run:
+   java -jar app.jar
+
+How to install using the EXE (Windows):
+1. Open the `installer` folder.
+2. Double-click the EXE (e.g., OOP_CK-1.0.exe) and follow the installer steps.
+
+Notes:
+- The JAR is a portable option; the installer produces a desktop/start-menu shortcut depending on installer defaults.
+- If you want a custom icon or MSI package, provide an .ico file or request MSI and I'll rebuild.

@@ -1,0 +1,22 @@
+Dọn dữ liệu cũ
+Tạo hai tài khoản qua menu
+Không cho phép trùng tên tài khoản
+Đổi tên tài khoản BankDemo qua menu
+Xem danh sách tài khoản qua menu (để đảm bảo luồng 4)
+Nạp thêm thu vào Bank và Wallet
+Chuyển khoản 1000 từ Bank sang Wallet qua menu
+Không thể chi vượt số dư (kiểm tra dịch vụ)
+Không thể chuyển vượt hạn mức (kiểm tra dịch vụ)
+Không thể xóa tài khoản khi còn số dư
+Thêm giao dịch chi 250 cho Wallet qua menu giao dịch
+Sửa giao dịch vừa tạo qua menu (đổi số tiền thành 200)
+Xem lịch sử giao dịch qua menu
+Không sửa được giao dịch không tồn tại
+Tạo hợp đồng lãi đơn qua menu Loan
+Tạo hợp đồng không lãi qua menu Loan
+Tính lãi cho cả hai hợp đồng
+Xem số ngày đến hạn của hợp đồng đầu tiên
+Cập nhật hợp đồng đầu tiên
+Xuất CSV cho tất cả dữ liệu
+Kiểm tra file CSV tồn tại và có dữ liệu
+Chạy App chính với lựa chọn sai để kiểm tra lỗi nhập

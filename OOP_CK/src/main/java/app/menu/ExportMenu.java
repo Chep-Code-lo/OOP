@@ -1,10 +1,13 @@
 package app.menu;
 
-import app.export.*;
-import app.loan.ContractStorage;
+import app.export.ExportAccounts;
+import app.export.ExportLoanPayments;
+import app.export.ExportLoans;
+import app.export.ExportTransactions;
+import app.repository.ContractStorage;
+import app.util.ConsoleUtils;
 import java.util.Objects;
 import java.util.Scanner;
-import app.util.*;
 
 public class ExportMenu {
     private final Scanner scanner;
@@ -20,7 +23,7 @@ public class ExportMenu {
             System.out.println("1. Lưu Tài khoản");
             System.out.println("2. Lưu Giao dịch");
             System.out.println("3. Lưu Khoản vay");
-            System.out.println("4. Lưu Lịch sử trả");
+            System.out.println("4. Lưu báo cáo Thu - Chi");
             System.out.println("5. Lưu tất cả");
             System.out.println("0. Quay lại");
             System.out.print("Bạn muốn : ");
@@ -40,14 +43,14 @@ public class ExportMenu {
                         ConsoleUtils.pause(scanner);
                     }
                     case "4" -> {
-                        save(() -> ExportLoanPayments.export(), "loan_payments.csv");
+                        save(() -> ExportLoanPayments.export(), "report_income_expense.csv");
                         ConsoleUtils.pause(scanner);
                     }
                     case "5" -> {
                         save(() -> ExportAccounts.export(), "accounts.csv");
                         save(() -> ExportTransactions.export(), "transactions.csv");
                         save(() -> ExportLoans.export(), "loans.csv");
-                        save(() -> ExportLoanPayments.export(), "loan_payments.csv");
+                        save(() -> ExportLoanPayments.export(), "report_income_expense.csv");
                         ConsoleUtils.pause(scanner);
                     }
                     case "0" -> {

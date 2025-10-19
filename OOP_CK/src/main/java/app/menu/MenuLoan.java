@@ -1,11 +1,21 @@
 package app.menu;
 
-import app.util.*;
-import app.loan.*;
+import app.loan.DeleteContact;
+import app.loan.UpdateContact;
+import app.service.DateService;
+import app.service.InterestService;
+import app.util.ConsoleUtils;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class MenuLoan {
-    Scanner sc = new Scanner(System.in);
+    private final Scanner sc;
+
+    public MenuLoan(Scanner sc) {
+        this.sc = Objects.requireNonNull(sc, "scanner");
+    }
+
     public void showMenu() {
         while (true) {
             ConsoleUtils.clear();
@@ -19,10 +29,13 @@ public class MenuLoan {
             System.out.print("Bạn muốn : ");
 
             try {
-                switch (sc.nextLine().trim()) {
+                if (!sc.hasNextLine()) {
+                    return;
+                }
+                String choice = sc.nextLine().trim();
+                switch (choice) {
                     case "1" -> {
-                        MenuContact.showMenu();
-                        ConsoleUtils.pause(sc);
+                        MenuContact.showMenu(sc);
                     }
                     case "2" -> {
                         UpdateContact.update(sc);
@@ -33,11 +46,11 @@ public class MenuLoan {
                         ConsoleUtils.pause(sc);
                     }
                     case "4" -> {
-                        DateService.Datecheck();
+                        DateService.Datecheck(sc);
                         ConsoleUtils.pause(sc);
                     }
-                    case "5" ->{
-                        InterestService.Menu();
+                    case "5" -> {
+                        InterestService.showMenu(sc);
                         ConsoleUtils.pause(sc);
                     }
                     case "0" -> {
@@ -48,7 +61,11 @@ public class MenuLoan {
                 }
             } catch (Exception e) {
                 System.out.println("!! Lỗi: " + e.getMessage());
-                ConsoleUtils.pause(sc);
+                try {
+                    ConsoleUtils.pause(sc);
+                } catch (NoSuchElementException ignored) {
+                    // input stream exhausted (e.g., automated test); skip pause
+                }
             }
         }
     }

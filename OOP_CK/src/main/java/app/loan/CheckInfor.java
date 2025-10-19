@@ -1,4 +1,5 @@
 package app.loan;
+
 import java.util.Scanner;
 
 public class CheckInfor {

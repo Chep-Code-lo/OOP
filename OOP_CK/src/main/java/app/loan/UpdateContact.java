@@ -1,10 +1,11 @@
 package app.loan;
+
+import app.repository.ContractStorage;
+import app.util.ConsoleUtils;
 import java.util.List;
 import java.util.Scanner;
 
-import app.util.ConsoleUtils;
-
-public class UpdateContact{
+public class UpdateContact {
     public static void update(Scanner sc) {
         try {
             List<ContractStorage.Contract> list = ContractStorage.loadAll();
@@ -22,7 +23,7 @@ public class UpdateContact{
             }
 
             int choice = CheckInfor.checkOp(sc, 0, list.size());
-            if(choice == 0){return;}
+            if (choice == 0) { return; }
             ContractStorage.Contract old = list.get(choice - 1);
             System.out.println("\n=== Cập nhật hợp đồng ===");
             System.out.println("(Enter để giữ nguyên giá trị cũ)");
@@ -33,8 +34,8 @@ public class UpdateContact{
             String traDate = prompt(sc, "Ngày vay (DD/MM/YYYY) [" + old.traDate + "]: ");
             String vayDate  = prompt(sc, "Hạn trả (DD/MM/YYYY) [" + old.traDate + "]: ");
             String moneyStr = prompt(sc, "Số tiền [" + old.money + "]: ");
-            String Interes = prompt(sc, "Lãi [" + old.interest + "]: ");
-            String type =prompt(sc,"Loại Lãi ["+ old.type +"]: ");
+            String interestStr = prompt(sc, "Lãi [" + old.interest + "]: ");
+            String type = prompt(sc,"Loại Lãi ["+ old.type +"]: ");
             String note     = prompt(sc, "Ghi chú [" + old.note + "]: ");
 
             // Nếu để trống -> giữ nguyên
@@ -43,7 +44,7 @@ public class UpdateContact{
             if (vayDate.isBlank()) vayDate = old.vayDate;
             if (traDate.isBlank()) traDate = old.traDate;
             if (moneyStr.isBlank()) moneyStr = old.money;
-            if (Interes.isBlank()) Interes = old.interest;
+            if (interestStr.isBlank()) interestStr = old.interest;
             if (type.isBlank()) type = old.type;
             if (note.isBlank())    note = old.note;
 
@@ -53,7 +54,7 @@ public class UpdateContact{
             }
 
             ContractStorage.Contract updated = new ContractStorage.Contract(
-                    old.id, status, name, moneyStr, phone, vayDate, traDate, Interes, type, note, old.createdAt
+                    old.id, status, name, moneyStr, phone, vayDate, traDate, interestStr, type, note, old.createdAt
             );
 
             boolean ok = ContractStorage.updateByIndex(choice, updated);

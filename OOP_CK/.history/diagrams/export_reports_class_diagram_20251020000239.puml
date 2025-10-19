@@ -1,0 +1,62 @@
+@startuml
+skinparam backgroundColor #1e1e1e
+skinparam classFontColor white
+skinparam classBackgroundColor #2d2d2d
+skinparam classBorderColor #aaaaaa
+skinparam arrowColor #cccccc
+skinparam noteBackgroundColor #333333
+skinparam noteBorderColor #aaaaaa
+
+title Export Reports – Class Diagram
+
+class ExportLoanPayments {
+  +static Path export()
+  --
+  -static Path exportIncomeExpense()
+  -static void exportLoanSummary()
+  -static void exportAccountSummary()
+  -static void accumulate(map, key, amount, income)
+  -static BigDecimal parseAmount(raw)
+  -static LocalDate parseDate(raw)
+  -static String value(row, key)
+}
+
+class PeriodKey {
+  +String label()
+  +String bucket()
+  --
+  +static PeriodKey daily(date)
+  +static PeriodKey monthly(date)
+  +static PeriodKey yearly(date)
+}
+
+class PeriodTotals {
+  BigDecimal income
+  BigDecimal expense
+  --
+  +BigDecimal net()
+}
+
+class DataStore {
+  +transactions(): List<Map>
+  +loans(): List<Map>
+  +accounts(): List<Map>
+}
+
+class CsvExporter {
+  +writeCsv(name, headers, rows): Path
+}
+
+ExportLoanPayments ..> DataStore : đọc dữ liệu thống kê
+ExportLoanPayments ..> CsvExporter : ghi file CSV
+ExportLoanPayments *-- PeriodKey
+ExportLoanPayments *-- PeriodTotals
+
+note right of ExportLoanPayments
+  Sinh ba báo cáo chính:
+  • Thu/Chi theo chu kỳ (ngày, tháng, năm)
+  • Khoản vay & cho vay
+  • Số dư theo từng tài khoản
+end note
+
+@enduml

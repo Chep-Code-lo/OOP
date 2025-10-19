@@ -1,10 +1,10 @@
 package app.loan;
+
+import app.repository.ContractStorage;
+import app.util.ConsoleUtils;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
-
-import app.util.ConsoleUtils;
-
-import java.io.IOException;
 
 public class DeleteContact {
     public static void delete(Scanner sc) {

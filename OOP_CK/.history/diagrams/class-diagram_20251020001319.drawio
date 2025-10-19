@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram id="classDiagram" name="Class Diagram">
+    <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Account (abstract) -->
+        <mxCell id="2" value="Account (abstract)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="180" height="180" as="geometry" />
+        </mxCell>
+        <!-- BankAccount -->
+        <mxCell id="3" value="BankAccount" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="260" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <!-- EWalletAccount -->
+        <mxCell id="4" value="EWalletAccount" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="260" y="120" width="140" height="60" as="geometry" />
+        </mxCell>
+        <!-- Contract -->
+        <mxCell id="5" value="Contract" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="240" width="180" height="180" as="geometry" />
+        </mxCell>
+        <!-- Ledger -->
+        <mxCell id="6" value="Ledger" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="260" y="240" width="140" height="100" as="geometry" />
+        </mxCell>
+        <!-- Transaction -->
+        <mxCell id="7" value="Transaction" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="440" y="240" width="140" height="100" as="geometry" />
+        </mxCell>
+        <!-- Inheritance: Account -> BankAccount -->
+        <mxCell id="8" style="endArrow=block;endFill=1;html=1;strokeColor=#333333;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Inheritance: Account -> EWalletAccount -->
+        <mxCell id="9" style="endArrow=block;endFill=1;html=1;strokeColor=#333333;" edge="1" parent="1" source="2" target="4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Association: Ledger -- Transaction -->
+        <mxCell id="10" style="endArrow=open;html=1;strokeColor=#333333;" edge="1" parent="1" source="6" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Association: Transaction -- Account -->
+        <mxCell id="11" style="endArrow=open;html=1;strokeColor=#333333;" edge="1" parent="1" source="7" target="2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

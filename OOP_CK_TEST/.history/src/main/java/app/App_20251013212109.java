@@ -1,0 +1,59 @@
+package app;
+import java.util.Scanner;
+import app.ui.ConsoleUtils;
+import app.ui.CheckInfor;
+public class App{
+    public static void main(String[] args){
+    Scanner sc = new Scanner(System.in);
+        while(true) {
+            ConsoleUtils.clear();
+            System.out.println("==========Menu Loan==========");
+            System.out.println("1. Tạo hợp đồng về vay/cho vay");
+            System.out.println("2. Cập nhật lại hợp đồng");
+            System.out.println("3. Xóa hợp đồng");
+            System.out.println("4. Hẹn nhắc nhở");
+            System.out.println("5. Xem lãi");
+            System.out.println("6. Quay lại menu chính");
+            int choice = CheckInfor.checkOp(sc, 1, 6);
+            switch (choice) {
+                case 1->{
+                    System.out.println("\nNhấn Enter để quay lại menu Loan...");
+                    sc.nextLine();
+                }
+                case 2 ->{
+                    ConsoleUtils.clear();
+
+                    ConsoleUtils.pause(sc);
+                }
+                case 3 ->{
+                    ConsoleUtils.clear();
+
+                    ConsoleUtils.pause(sc);
+
+                }
+                case 4 ->{
+                    ConsoleUtils.clear();
+
+                    ConsoleUtils.pause(sc);
+
+                }
+                case 5 ->{
+                    ConsoleUtils.clear();
+
+                    ConsoleUtils.pause(sc);
+
+                }
+                case 6 ->{
+                    System.out.println("Pái pai nha");
+                    return;
+                }
+                default -> {
+                    // (CheckInfor.checkOp đã kiểm tra rồi, nên nhánh này gần như không xảy ra)
+                    System.out.println("Lựa chọn không hợp lệ. Hãy nhập từ 1 đến 6!");
+                    ConsoleUtils.pause(sc);
+                }
+            }
+        }
+    }
+}
+
