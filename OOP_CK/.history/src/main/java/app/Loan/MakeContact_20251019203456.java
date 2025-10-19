@@ -4,7 +4,7 @@ import java.util.Scanner;
 import app.util.*;
 public class MakeContact{
     
-    public static Contract Create(Scanner sc, Contract.Stats stats) {
+    private static Contract Create(Scanner sc, Contract.Stats stats) {
         String name = readInfor.readNonBlank(sc, "Tên người liên hệ: ");
         String money = readInfor.readNonBlank(sc, "Số tiền nợ: ");
 
@@ -48,7 +48,7 @@ public class MakeContact{
 
         return c;
     }
-    public static void save(Contract c) {
+    private static void save(Contract c) {
         try {
             ContractStorage.saveBorrow(
                     c.getStats().name(),

@@ -1,9 +1,6 @@
-package app.ui;
+package app.menu;
 
-import app.account.AccountMenu;
-import app.account.FinanceManager;
-import app.account.ReportMenu;
-import app.account.TransferMenu;
+import app.account.*;
 import java.util.Objects;
 import java.util.Scanner;
 

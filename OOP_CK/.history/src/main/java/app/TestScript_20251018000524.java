@@ -15,15 +15,12 @@ import app.ui.ExportMenu;
 import app.ui.MenuLoan;
 import app.ui.Menutransaction;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -341,24 +338,15 @@ public final class TestScript {
     }
 
     private static void runWithInput(String text, CheckedRunnable action) throws Exception {
-        InputStream originalIn = System.in;
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-        try (PrintStream capture = new PrintStream(buffer, true, StandardCharsets.UTF_8)) {
-            originalOut.println("[INPUT]\n" + text);
-            System.setIn(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)));
-            System.setOut(capture);
+        InputStream original = System.in;
+        try {
+            System.out.println("[INPUT]\n" + text);
+            System.setIn(new ByteArrayInputStream(text.getBytes()));
             Thread.sleep(DELAY_MS);
             action.run();
         } finally {
-            System.setIn(originalIn);
-            System.setOut(originalOut);
+            System.setIn(original);
         }
-
-        String output = buffer.toString(StandardCharsets.UTF_8);
-        originalOut.println("[OUTPUT]");
-        originalOut.println(output.isEmpty() ? "(không có dữ liệu)" : output);
     }
 
     private static void cleanupEnvironment() throws IOException {

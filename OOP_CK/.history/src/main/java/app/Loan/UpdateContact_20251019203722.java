@@ -2,7 +2,7 @@ package app.loan;
 import java.util.List;
 import java.util.Scanner;
 
-import app.util.ConsoleUtils;
+import app.util.*;.ConsoleUtils;
 
 public class UpdateContact{
     public static void update(Scanner sc) {

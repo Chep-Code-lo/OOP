@@ -48,7 +48,7 @@ public class MakeContact{
 
         return c;
     }
-    public static void save(Contract c) {
+    private static void save(Contract c) {
         try {
             ContractStorage.saveBorrow(
                     c.getStats().name(),

@@ -1,6 +1,7 @@
 package app.account;
 
-import app.util.*;
+import app.ui.ConsoleMoneyReader;
+import app.ui.ConsoleUtils;
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Scanner;

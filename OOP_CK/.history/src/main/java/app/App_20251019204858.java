@@ -9,11 +9,9 @@ public class App {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         FinanceManager financeManager = new FinanceManager();
-
         MenuAccount accountMenu = new MenuAccount(financeManager, sc);
         Menutransaction mangeMenu = new Menutransaction(financeManager, sc);
         MenuLoan loanMenu = new MenuLoan();
-        MenuPayment paymentMenu = new MenuPayment();
         ExportMenu expMenu = new ExportMenu(sc);
 
         while (true) {
@@ -32,7 +30,10 @@ public class App {
                     case "1" -> accountMenu.showMenu();
                     case "2" -> mangeMenu.showMenu();
                     case "3" -> loanMenu.showMenu();
-                    case "4" -> paymentMenu.showMenu();
+                    case "4" -> {
+                        ConsoleUtils.clear();
+                        ConsoleUtils.pause(sc);
+                    }
                     case "5" -> expMenu.show();
                     case "0" -> {
                         System.out.println("Pái pai nha");
