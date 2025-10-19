@@ -33,7 +33,6 @@ public class AccountReport {
         double total = rows.stream().mapToDouble(AccountRow::balance).sum();
         PaymentReportSaver.saveAccountReport(rows, total);
         printTable(rows, total);
-        pause();
     }
 
     private static void printTable(List<AccountRow> rows, double total) {
@@ -55,12 +54,5 @@ public class AccountReport {
     private static String truncate(String s, int max) {
         if (s == null) return "";
         return s.length() <= max ? s : s.substring(0, max-1) + "…";
-    }
-
-    private static void pause() {
-        System.out.print("Press Enter to continue...");
-        try {
-            System.in.read();
-        } catch (Exception ignored) {}
     }
 }

@@ -1,19 +1,19 @@
 package app;
 
 import app.App;
-import app.account.AccountMenu;
 import app.account.BankAccount;
 import app.account.FinanceManager;
-import app.account.TransferMenu;
 import app.export.ExportAccounts;
 import app.export.ExportLoans;
 import app.export.ExportTransactions;
 import app.loan.ContractStorage;
+import app.menu.AccountMenu;
+import app.menu.ExportMenu;
+import app.menu.MenuLoan;
+import app.menu.Menutransaction;
+import app.menu.TransferMenu;
 import app.store.DataStore;
 import app.transaction.TransactionService;
-import app.ui.ExportMenu;
-import app.ui.MenuLoan;
-import app.ui.Menutransaction;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

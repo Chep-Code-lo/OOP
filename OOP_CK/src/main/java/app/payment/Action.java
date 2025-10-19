@@ -22,7 +22,6 @@ public class Action {
         logIncomeExpenseSelection(range, categories, type);
         IncomeExpenseReport.run(range, categories, type);
 
-        ConsoleUtils.pause(sc);
     }
 
     // ===== Khoản vay: lọc theo hạn trả + Trạng thái
@@ -35,7 +34,6 @@ public class Action {
 
         logLoanSelection(range, statuses);
         LoanReport.run(range, statuses);
-        ConsoleUtils.pause(sc);
     }
 
     // === Helpers nhập liệu chung ===

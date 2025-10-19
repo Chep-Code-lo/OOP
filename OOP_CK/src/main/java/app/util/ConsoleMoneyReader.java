@@ -1,4 +1,4 @@
-package app.ui;
+package app.util;
 
 import java.math.BigDecimal;
 import java.util.Objects;
