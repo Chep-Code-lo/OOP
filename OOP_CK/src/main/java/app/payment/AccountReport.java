@@ -31,6 +31,7 @@ public class AccountReport {
         rows.sort(Comparator.comparing(AccountRow::name, String.CASE_INSENSITIVE_ORDER));
 
         double total = rows.stream().mapToDouble(AccountRow::balance).sum();
+        PaymentReportSaver.saveAccountReport(rows, total);
         printTable(rows, total);
         pause();
     }

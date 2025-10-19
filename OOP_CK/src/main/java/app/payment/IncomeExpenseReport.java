@@ -65,6 +65,7 @@ public class IncomeExpenseReport {
         }
 
         double net = totalIncome - totalExpense;
+        PaymentReportSaver.saveIncomeExpense(range, categories, typeFilter, byCategory, totalIncome, totalExpense, net);
         printTable(byCategory, totalIncome, totalExpense, net);
     }
 

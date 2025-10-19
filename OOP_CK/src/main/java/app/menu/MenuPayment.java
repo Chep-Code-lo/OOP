@@ -27,6 +27,7 @@ public class MenuPayment {
                         ConsoleUtils.pause(sc);
                     }
                     case "3" -> {
+                        ActionLogger.logAction("Báo cáo Tài khoản");
                         AccountReport.run();           // Tài khoản
                         ConsoleUtils.pause(sc);
                     }

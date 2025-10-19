@@ -56,6 +56,7 @@ public class LoanReport {
 
         rows.sort(Comparator.comparing((LoanRow r) -> r.dueDate == null ? LocalDate.MAX : r.dueDate));
         double outstanding = rows.stream().mapToDouble(LoanRow::amount).sum();
+        PaymentReportSaver.saveLoanReport(range, statuses, rows, outstanding);
         printTable(rows, outstanding);
     }
 

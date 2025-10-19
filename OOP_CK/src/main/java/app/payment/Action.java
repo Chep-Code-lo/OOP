@@ -19,6 +19,7 @@ public class Action {
         List<String> categories = inputCategories(); // có thể rỗng
         IncomeExpenseReport.TxClass type = MenuIncomeExpense.inputTxClass(); // Tất cả / Thu / Chi
 
+        logIncomeExpenseSelection(range, categories, type);
         IncomeExpenseReport.run(range, categories, type);
 
         ConsoleUtils.pause(sc);
@@ -32,6 +33,7 @@ public class Action {
         DateRange range = inputDateRange();
         List<String> statuses = inputLoanStatuses(); // có thể rỗng
 
+        logLoanSelection(range, statuses);
         LoanReport.run(range, statuses);
         ConsoleUtils.pause(sc);
     }
@@ -138,5 +140,28 @@ public class Action {
             return List.of();
         }
         return picks.stream().sorted().map(list::get).toList();
+    }
+
+    private static void logIncomeExpenseSelection(DateRange range, List<String> categories, IncomeExpenseReport.TxClass type) {
+        String rangeText = ReportUtils.describeRange(range);
+        String categoryText = ReportUtils.describeSelection(categories, "Tất cả danh mục");
+        String typeText = type == null ? "Không xác định" : switch (type) {
+            case ALL -> "Tất cả";
+            case INCOME -> "Thu";
+            case EXPENSE -> "Chi";
+        };
+        ActionLogger.logAction(String.format(
+                "Báo cáo Thu-Chi | Khoảng: %s | Danh mục: %s | Phân loại: %s",
+                rangeText, categoryText, typeText
+        ));
+    }
+
+    private static void logLoanSelection(DateRange range, List<String> statuses) {
+        String rangeText = ReportUtils.describeRange(range);
+        String statusText = ReportUtils.describeSelection(statuses, "Tất cả trạng thái");
+        ActionLogger.logAction(String.format(
+                "Báo cáo Khoản vay | Khoảng hạn trả: %s | Trạng thái: %s",
+                rangeText, statusText
+        ));
     }
 }
