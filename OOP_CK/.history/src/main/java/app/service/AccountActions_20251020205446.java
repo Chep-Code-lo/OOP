@@ -14,48 +14,30 @@ public class AccountActions {
     private final Scanner scanner;
     private final ConsoleMoneyReader moneyReader;
 
+    /** Tạo bộ hành động dựa trên FinanceManager và nguồn nhập liệu console. */
     public AccountActions(FinanceManager financeManager, Scanner scanner) {
         this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
         this.scanner = Objects.requireNonNull(scanner, "scanner");
         this.moneyReader = new ConsoleMoneyReader(this.scanner);
     }
 
-    private static String norm(String s) { return s == null ? "" : s.trim(); }
-
     /** Thêm tài khoản mới và hỏi nạp số dư ban đầu nếu cần. */
     public void addAccount() {
         System.out.println("Chọn loại: 1-Ngân hàng, 2-Ví điện tử");
         int type = ConsoleUtils.readIntInRange(scanner, "Loại: ", 1, 2);
-        String name = norm(ConsoleUtils.readLine(scanner, "Tên tài khoản: "));
+        String name = ConsoleUtils.readLine(scanner, "Tên tài khoản: ").trim();
 
-        // --- FIX: kiểm tra trùng tên trước khi tạo ---
-        boolean nameExists = financeManager.listAccounts().stream()
-                .anyMatch(a -> a.getName().equalsIgnoreCase(name));
-        if (name.isEmpty()) {
-            System.out.println("Lỗi: Tên tài khoản không được để trống");
-            return;
-        }
-        if (nameExists) {
-            System.out.println("Lỗi: Tên tài khoản phải là duy nhất");
-            return; // quan trọng: KHÔNG tạo nữa
+        String id = (type == 1)
+                ? financeManager.addAccount(new BankAccount(name))
+                : financeManager.addAccount(new EWalletAccount(name));
+
+        if (ConsoleUtils.confirm(scanner, "Bạn có muốn nạp số dư ban đầu?")) {
+            BigDecimal amt = moneyReader.readAmount("Số tiền ban đầu (VND): ");
+            financeManager.addIncome(id, amt, null, "Số dư ban đầu");
+            System.out.println("Đã nạp số dư ban đầu.");
         }
 
-        try {
-            String id = (type == 1)
-                    ? financeManager.addAccount(new BankAccount(name))
-                    : financeManager.addAccount(new EWalletAccount(name));
-
-            if (ConsoleUtils.confirm(scanner, "Bạn có muốn nạp số dư ban đầu?")) {
-                BigDecimal amt = moneyReader.readAmount("Số tiền ban đầu (VND): ");
-                financeManager.addIncome(id, amt, null, "Số dư ban đầu");
-                System.out.println("Đã nạp số dư ban đầu.");
-            }
-
-            System.out.println("Đã thêm tài khoản.");
-        } catch (Exception e) {
-            // phòng hờ nếu lớp dưới vẫn ném lỗi
-            System.out.println("Lỗi: " + e.getMessage());
-        }
+        System.out.println("Đã thêm tài khoản.");
     }
 
     /** Đổi tên tài khoản theo ID. */
@@ -65,32 +47,16 @@ public class AccountActions {
             return;
         }
 
-        String id = norm(ConsoleUtils.readLine(scanner, "ID tài khoản cần đổi tên: "));
+        String id = ConsoleUtils.readLine(scanner, "ID tài khoản cần đổi tên: ").trim();
         boolean exists = financeManager.listAccounts().stream().anyMatch(a -> a.getId().equals(id));
         if (!exists) {
             System.out.println("Lỗi: Không tìm thấy tài khoản: " + id);
             return;
         }
 
-        String newName = norm(ConsoleUtils.readLine(scanner, "Tên mới: "));
-        // --- FIX: kiểm tra trùng tên khi đổi tên ---
-        boolean dup = financeManager.listAccounts().stream()
-                .anyMatch(a -> !a.getId().equals(id) && a.getName().equalsIgnoreCase(newName));
-        if (newName.isEmpty()) {
-            System.out.println("Lỗi: Tên tài khoản không được để trống");
-            return;
-        }
-        if (dup) {
-            System.out.println("Lỗi: Tên tài khoản phải là duy nhất");
-            return;
-        }
-
-        try {
-            financeManager.updateAccountName(id, newName);
-            System.out.println("Đã đổi tên tài khoản.");
-        } catch (Exception e) {
-            System.out.println("Lỗi: " + e.getMessage());
-        }
+        String newName = ConsoleUtils.readLine(scanner, "Tên mới: ").trim();
+        financeManager.updateAccountName(id, newName);
+        System.out.println("Đã đổi tên tài khoản.");
     }
 
     /** Xoá tài khoản nếu hợp lệ. */
@@ -100,13 +66,9 @@ public class AccountActions {
             return;
         }
 
-        String id = norm(ConsoleUtils.readLine(scanner, "ID tài khoản cần xóa: "));
-        try {
-            financeManager.deleteAccount(id);
-            System.out.println("Đã xóa tài khoản.");
-        } catch (Exception e) {
-            System.out.println("Lỗi: " + e.getMessage());
-        }
+        String id = ConsoleUtils.readLine(scanner, "ID tài khoản cần xóa: ").trim();
+        financeManager.deleteAccount(id);
+        System.out.println("Đã xóa tài khoản.");
     }
 
     /** Liệt kê tất cả tài khoản hiện có. */
@@ -171,10 +133,12 @@ public class AccountActions {
         }
     }
 
+    /** Kiểm tra sự tồn tại của tài khoản theo ID. */
     private boolean hasAccount(String id) {
         return financeManager.listAccounts().stream().anyMatch(a -> a.getId().equals(id));
     }
 
+    /** Lấy số dư hiện tại của tài khoản theo ID, mặc định 0 nếu không thấy. */
     private BigDecimal getBalanceById(String id) {
         return financeManager.listAccounts().stream()
                 .filter(a -> a.getId().equals(id))
@@ -183,6 +147,7 @@ public class AccountActions {
                 .orElse(BigDecimal.ZERO);
     }
 
+    /** Đọc ID tài khoản, cho phép người dùng hủy thao tác khi không tìm thấy. */
     private String readAccountIdOrCancel(String prompt, String role) {
         while (true) {
             System.out.print(prompt);
@@ -206,6 +171,7 @@ public class AccountActions {
         }
     }
 
+    /** Đọc số tiền chuyển và buộc không vượt quá số dư hiện tại. */
     private BigDecimal readAmountAtMost(BigDecimal max, String prompt) {
         while (true) {
             BigDecimal value = moneyReader.readAmount(prompt);

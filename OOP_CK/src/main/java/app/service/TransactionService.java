@@ -141,6 +141,14 @@ public class TransactionService {
         return list;
     }
 
+    /** Lấy toàn bộ giao dịch của mọi tài khoản, sắp xếp theo thời gian. */
+    public List<Transaction> historyAllSorted() {
+        return financeManager.listAccounts().stream()
+                .flatMap(acc -> ledger.listByAccount(acc.getId()).stream())
+                .sorted(Comparator.comparing(Transaction::getOccurredAt))
+                .collect(Collectors.toList());
+    }
+
     /** Truy vấn số dư hiện tại của tài khoản. */
     public BigDecimal getBalance(String accountId) {
         return financeManager.requireAccount(accountId).getBalance();
@@ -148,7 +156,11 @@ public class TransactionService {
 
     /** Lấy tên tài khoản (phục vụ hiển thị). */
     public String resolveAccountName(String accountId) {
-        return financeManager.requireAccount(accountId).getName();
+        try {
+            return financeManager.requireAccount(accountId).getName();
+        } catch (IllegalArgumentException ex) {
+            return "(Tài khoản không còn tồn tại)";
+        }
     }
 
     /** Tìm một giao dịch cụ thể trong Ledger theo accountId + transactionId. */

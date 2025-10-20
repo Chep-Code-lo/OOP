@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +20,7 @@ import java.util.Scanner;
 
 /** Menu thao tác giao dịch thu/chi, cung cấp các bước nhập liệu cho người dùng. */
 public class TransactionMenu {
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final FinanceManager financeManager;
     private final TransactionService transactionService;
     private final Scanner scanner;
@@ -102,7 +105,7 @@ public class TransactionMenu {
         }
         TxnType type = readTxnType("Loại (1=Thu, 2=Chi): ", false);
         BigDecimal amount = moneyReader.readAmount("Số tiền (VND): ");
-        LocalDate date = readRequiredDate("Ngày giao dịch (YYYY-MM-DD): ");
+        LocalDate date = readRequiredDate("Ngày giao dịch (dd-MM-yyyy): ");
         System.out.print("Danh mục: ");
         String category = scanner.nextLine().trim();
         System.out.print("Ghi chú: ");
@@ -115,57 +118,55 @@ public class TransactionMenu {
     /** Liệt kê các giao dịch của một tài khoản theo thứ tự thời gian. */
     private void listTransactions() {
         ConsoleUtils.printHeader("LỊCH SỬ GIAO DỊCH");
-        String accountId = chooseAccount();
-        if (accountId == null) {
-            System.out.println("Đã hủy thao tác.");
-            return;
-        }
-        List<Transaction> entries = transactionService.historySorted(accountId);
+        List<Transaction> entries = transactionService.historyAllSorted();
         if (entries.isEmpty()) {
             System.out.println("(Chưa có giao dịch nào.)");
             return;
         }
-        entries.forEach(tx -> System.out.printf("- %s | %s | %s VND | %s | %s%n",
-                tx.getId(),
-                tx.getType(),
-                tx.getAmount().toPlainString(),
-                formatDate(tx.getOccurredAt()),
-                tx.getNote()));
+        printTransactions(entries, false);
     }
 
     /** Cho phép chỉnh sửa giao dịch đã chọn với các trường nhập tuỳ chọn. */
     private void editTransaction() {
         ConsoleUtils.printHeader("SỬA GIAO DỊCH");
-        String accountId = chooseAccount();
-        if (accountId == null) {
-            System.out.println("Đã hủy thao tác.");
+        Transaction selected = chooseTransaction("sửa");
+        if (selected == null) {
             return;
         }
-        System.out.print("ID giao dịch cần sửa: ");
-        String txnId = scanner.nextLine().trim();
-        TxnType newType = readTxnType("Loại mới (1=Thu, 2=Chi, Enter = giữ nguyên): ", true);
-        BigDecimal newAmount = readOptionalAmount("Số tiền mới (VND, Enter = giữ nguyên): ");
-        LocalDate newDate = readOptionalDate("Ngày mới (YYYY-MM-DD, Enter = giữ nguyên): ");
-        System.out.print("Danh mục mới (Enter = giữ nguyên): ");
+
+        String accountId = selected.getAccountId();
+        System.out.printf("Đang sửa giao dịch: %s | %s | %s VND | %s | %s%n",
+                transactionService.resolveAccountName(accountId),
+                selected.getType(),
+                selected.getAmount().toPlainString(),
+                formatDate(selected.getOccurredAt()),
+                selected.getNote());
+
+        TxnType newType = readTxnType(
+                String.format("Loại mới (1=Thu, 2=Chi, Enter = giữ nguyên [%s]): ", selected.getType()),
+                true);
+        BigDecimal newAmount = readOptionalAmount(
+                String.format("Số tiền mới (VND, Enter = giữ nguyên [%s]): ", selected.getAmount().toPlainString()));
+        LocalDate newDate = readOptionalDate(
+                String.format("Ngày mới (dd-MM-yyyy, Enter = giữ nguyên [%s]): ", formatDate(selected.getOccurredAt())));
+        System.out.printf("Danh mục mới (Enter = giữ nguyên [%s]): ", defaultIfBlank(selected.getCategory(), "(trống)"));
         String newCategory = blankToNull(scanner.nextLine().trim());
-        System.out.print("Ghi chú mới (Enter = giữ nguyên): ");
+        System.out.printf("Ghi chú mới (Enter = giữ nguyên [%s]): ", defaultIfBlank(selected.getNote(), "(trống)"));
         String newNote = blankToNull(scanner.nextLine().trim());
 
-        transactionService.editTransaction(accountId, txnId, newType, newAmount, newDate, newCategory, newNote);
+        transactionService.editTransaction(accountId, selected.getId(), newType, newAmount, newDate, newCategory, newNote);
         System.out.println("✔ Đã cập nhật giao dịch.");
     }
 
     /** Xoá giao dịch sau khi xác định tài khoản và mã giao dịch. */
     private void deleteTransaction() {
         ConsoleUtils.printHeader("XÓA GIAO DỊCH");
-        String accountId = chooseAccount();
-        if (accountId == null) {
-            System.out.println("Đã hủy thao tác.");
+        Transaction selected = chooseTransaction("xóa");
+        if (selected == null) {
             return;
         }
-        System.out.print("ID giao dịch cần xóa: ");
-        String txnId = scanner.nextLine().trim();
-        transactionService.deleteTransaction(accountId, txnId);
+
+        transactionService.deleteTransaction(selected.getAccountId(), selected.getId());
         System.out.println("✔ Đã xóa giao dịch.");
     }
 
@@ -222,20 +223,20 @@ public class TransactionMenu {
         }
     }
 
-    /** Đọc ngày bắt buộc theo định dạng YYYY-MM-DD. */
+    /** Đọc ngày bắt buộc theo định dạng dd-MM-yyyy. */
     private LocalDate readRequiredDate(String prompt) {
         while (true) {
             System.out.print(prompt);
             String input = scanner.nextLine().trim();
             try {
-                return LocalDate.parse(input);
-            } catch (Exception e) {
-                System.out.println("Ngày không hợp lệ, định dạng phải là YYYY-MM-DD.");
+                return LocalDate.parse(input, DATE_FORMAT);
+            } catch (DateTimeParseException e) {
+                System.out.println("Ngày không hợp lệ, định dạng phải là dd-MM-yyyy.");
             }
         }
     }
 
-    /** Đọc ngày tuỳ chọn, trả về null khi người dùng bỏ trống. */
+    /** Đọc ngày tuỳ chọn theo định dạng dd-MM-yyyy, trả về null khi người dùng bỏ trống. */
     private LocalDate readOptionalDate(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -244,9 +245,9 @@ public class TransactionMenu {
                 return null;
             }
             try {
-                return LocalDate.parse(input);
-            } catch (Exception e) {
-                System.out.println("Ngày không hợp lệ, định dạng phải là YYYY-MM-DD.");
+                return LocalDate.parse(input, DATE_FORMAT);
+            } catch (DateTimeParseException e) {
+                System.out.println("Ngày không hợp lệ, định dạng phải là dd-MM-yyyy.");
             }
         }
     }
@@ -256,8 +257,60 @@ public class TransactionMenu {
         return (value == null || value.isBlank()) ? null : value;
     }
 
-    /** Định dạng lại Instant thành chuỗi ngày (YYYY-MM-DD). */
+    /** Hiển thị danh sách giao dịch với thông tin tài khoản, kiểu và ghi chú. */
+    private void printTransactions(List<Transaction> entries, boolean showIndex) {
+        int width = String.valueOf(entries.size()).length();
+        for (int i = 0; i < entries.size(); i++) {
+            Transaction tx = entries.get(i);
+            String accountLabel = transactionService.resolveAccountName(tx.getAccountId()) + " (" + tx.getAccountId() + ")";
+            String prefix = showIndex ? String.format("%" + width + "d) ", i + 1) : "- ";
+            System.out.printf(
+                    "%s%s | %s | %s VND | %s | %s | %s%n",
+                    prefix,
+                    accountLabel,
+                    tx.getType(),
+                    tx.getAmount().toPlainString(),
+                    formatDate(tx.getOccurredAt()),
+                    defaultIfBlank(tx.getCategory(), "(không danh mục)"),
+                    defaultIfBlank(tx.getNote(), "(không ghi chú)")
+            );
+        }
+    }
+
+    /** Chọn một giao dịch từ danh sách, hỗ trợ huỷ bỏ. */
+    private Transaction chooseTransaction(String actionName) {
+        List<Transaction> entries = transactionService.historyAllSorted();
+        if (entries.isEmpty()) {
+            System.out.println("(Chưa có giao dịch nào.)");
+            return null;
+        }
+
+        printTransactions(entries, true);
+        while (true) {
+            System.out.printf("Chọn số giao dịch cần %s (Enter = hủy): ", actionName);
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Đã hủy thao tác.");
+                return null;
+            }
+            try {
+                int idx = Integer.parseInt(input);
+                if (idx >= 1 && idx <= entries.size()) {
+                    return entries.get(idx - 1);
+                }
+            } catch (NumberFormatException ignored) {}
+            System.out.println("Lựa chọn không hợp lệ, vui lòng nhập số trong danh sách.");
+        }
+    }
+
+    /** Trả về chuỗi mặc định nếu giá trị ban đầu trống. */
+    private String defaultIfBlank(String value, String fallback) {
+        return value == null || value.isBlank() ? fallback : value;
+    }
+
+    /** Định dạng lại Instant thành chuỗi ngày dd-MM-yyyy. */
     private String formatDate(Instant instant) {
-        return LocalDate.ofInstant(instant, ZoneId.systemDefault()).toString();
+        LocalDate date = LocalDate.ofInstant(instant, ZoneId.systemDefault());
+        return DATE_FORMAT.format(date);
     }
 }

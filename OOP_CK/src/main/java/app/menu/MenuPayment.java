@@ -6,12 +6,15 @@ import app.report.IncomeExpenseReport;
 import app.report.LoanReport;
 import app.util.ConsoleUtils;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 /** Menu tổng hợp cho các báo cáo tài chính (thu-chi, vay, tài khoản). */
 public class MenuPayment {
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final Scanner scanner = new Scanner(System.in);
 
     /** Vòng lặp hiển thị menu báo cáo và kích hoạt báo cáo tương ứng. */
@@ -71,8 +74,8 @@ public class MenuPayment {
 
     /** Đọc khoảng ngày báo cáo, tự động mở rộng nếu người dùng bỏ trống. */
     private DateRange readDateRange() {
-        LocalDate start = readDate("Từ ngày (YYYY-MM-DD, Enter để bỏ qua): ");
-        LocalDate end = readDate("Đến ngày (YYYY-MM-DD, Enter để bỏ qua): ");
+        LocalDate start = readDate("Từ ngày (dd-MM-yyyy, Enter để bỏ qua): ");
+        LocalDate end = readDate("Đến ngày (dd-MM-yyyy, Enter để bỏ qua): ");
         if (start == null && end == null) {
             return DateRange.allTime();
         }
@@ -85,7 +88,7 @@ public class MenuPayment {
         return new DateRange(effectiveStart, effectiveEnd);
     }
 
-    /** Đọc một ngày hợp lệ theo định dạng YYYY-MM-DD, trả về null nếu bỏ trống. */
+    /** Đọc một ngày hợp lệ theo định dạng dd-MM-yyyy, trả về null nếu bỏ trống. */
     private LocalDate readDate(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -94,9 +97,9 @@ public class MenuPayment {
                 return null;
             }
             try {
-                return LocalDate.parse(input);
-            } catch (Exception e) {
-                System.out.println("Ngày không hợp lệ, định dạng phải là YYYY-MM-DD.");
+                return LocalDate.parse(input, DATE_FORMAT);
+            } catch (DateTimeParseException e) {
+                System.out.println("Ngày không hợp lệ, định dạng phải là dd-MM-yyyy.");
             }
         }
     }
