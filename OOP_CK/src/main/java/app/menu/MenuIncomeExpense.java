@@ -3,7 +3,9 @@ package app.menu;
 import app.report.IncomeExpenseReport;
 import app.util.ConsoleUtils;
 import java.util.Scanner;
+/** Menu phụ hỗ trợ chọn phân loại giao dịch cho báo cáo Thu - Chi. */
 public class MenuIncomeExpense {
+    /** Đọc lựa chọn phân loại giao dịch từ người dùng và trả về enum tương ứng. */
     public static IncomeExpenseReport.TxClass inputTxClass() {
         Scanner sc = new Scanner(System.in);
         while (true) {

@@ -108,7 +108,9 @@ public class FinanceManager {
         return Collections.unmodifiableList(new ArrayList<>(accountIndex.values()));
     }
 
+    /** Truy cập dịch vụ báo cáo dùng chung cho UI. */
     public ReportService getReportService() { return reportService; }
+    /** Trả về Ledger nội bộ để các service khác tái sử dụng. */
     public Ledger getLedger() { return ledger; }
 
     /** Lấy Account theo id, ném lỗi nếu không tồn tại. */

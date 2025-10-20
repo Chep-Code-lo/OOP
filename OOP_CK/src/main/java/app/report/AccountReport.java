@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/** Báo cáo tổng quan tài khoản: in bảng và lưu file hỗ trợ PaymentReportSaver. */
 public class AccountReport {
 
     record AccountRow(String id, String name, String type, double balance, String note) {}
 
+    /** Thu thập dữ liệu tài khoản, sắp xếp và xuất báo cáo. */
     public static void run() {
         List<AccountRow> rows = new ArrayList<>();
         for (Map<String, Object> r : DataStore.accounts()) {
@@ -34,6 +36,7 @@ public class AccountReport {
         printTable(rows, total);
     }
 
+    /** In bảng báo cáo ra console theo định dạng cột cố định. */
     private static void printTable(List<AccountRow> rows, double total) {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         System.out.println("=============== ACCOUNTS ===============");
@@ -49,7 +52,9 @@ public class AccountReport {
         System.out.println();
     }
 
+    /** Trả về chuỗi rỗng nếu null. */
     private static String safe(String s) { return s == null ? "" : s; }
+    /** Cắt ngắn chuỗi nếu vượt quá độ dài mong muốn. */
     private static String truncate(String s, int max) {
         if (s == null) return "";
         return s.length() <= max ? s : s.substring(0, max-1) + "…";

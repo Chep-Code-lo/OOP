@@ -6,6 +6,7 @@ import app.menu.*;
 import java.util.Scanner;
 
 public class App {
+    /** Điểm vào của ứng dụng quản lý tài chính chạy trên console. */
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         FinanceManager financeManager = new FinanceManager();

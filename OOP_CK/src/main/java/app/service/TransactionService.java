@@ -33,6 +33,9 @@ public class TransactionService {
         return new ArrayList<>(financeManager.listAccounts());
     }
 
+    /**
+     * Ghi nhận một giao dịch thu/chi mới, cập nhật số dư tài khoản tương ứng rồi lưu vào Ledger + DataStore.
+     */
     public Transaction addTransaction(String accountId,
                                       TxnType type,
                                       BigDecimal amount,
@@ -66,6 +69,9 @@ public class TransactionService {
         return entry;
     }
 
+    /**
+     * Chỉnh sửa giao dịch: điều chỉnh lại số dư theo chênh lệch rồi cập nhật cả Ledger và DataStore.
+     */
     public void editTransaction(String accountId,
                                 String transactionId,
                                 TxnType newType,
@@ -107,6 +113,9 @@ public class TransactionService {
         upsertStoreTransaction(entry, accountName);
     }
 
+    /**
+     * Xoá giao dịch khỏi Ledger và DataStore đồng thời hoàn lại số dư ban đầu cho tài khoản.
+     */
     public void deleteTransaction(String accountId, String transactionId) {
         Transaction entry = findLedgerTransaction(accountId, transactionId);
         ledger.remove(entry);
@@ -122,6 +131,9 @@ public class TransactionService {
         DataStore.removeTransactionById(entry.getId());
     }
 
+    /**
+     * Lấy lịch sử giao dịch của một tài khoản theo thứ tự thời gian tăng dần.
+     */
     public List<Transaction> historySorted(String accountId) {
         List<Transaction> list = ledger.listByAccount(accountId).stream()
                 .sorted(Comparator.comparing(Transaction::getOccurredAt))
@@ -129,23 +141,28 @@ public class TransactionService {
         return list;
     }
 
+    /** Truy vấn số dư hiện tại của tài khoản. */
     public BigDecimal getBalance(String accountId) {
         return financeManager.requireAccount(accountId).getBalance();
     }
 
+    /** Lấy tên tài khoản (phục vụ hiển thị). */
     public String resolveAccountName(String accountId) {
         return financeManager.requireAccount(accountId).getName();
     }
 
+    /** Tìm một giao dịch cụ thể trong Ledger theo accountId + transactionId. */
     private Transaction findLedgerTransaction(String accountId, String txnId) {
         return ledger.find(accountId, txnId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy giao dịch"));
     }
 
+    /** Chuyển ngày LocalDate về Instant đầu ngày theo timezone hệ thống. */
     private static Instant toInstant(LocalDate date) {
         return date.atStartOfDay(ZoneId.systemDefault()).toInstant();
     }
 
+    /** Trả về số có dấu dựa trên loại giao dịch (thu = dương, chi = âm). */
     private static BigDecimal signed(TxnType type, BigDecimal amount) {
         return (type == TxnType.INCOME) ? amount : amount.negate();
     }

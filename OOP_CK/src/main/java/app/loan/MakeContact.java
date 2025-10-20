@@ -6,8 +6,10 @@ import app.util.DateUtils;
 import java.io.IOException;
 import java.util.Scanner;
 
+/** Tạo và lưu hợp đồng vay/cho vay mới. */
 public class MakeContact {
     
+    /** Thu thập thông tin từ console để xây dựng Contract hợp lệ. */
     public static Contract Create(Scanner sc, Contract.Stats stats) {
         String name = ReadInfor.readNonBlank(sc, "Tên người liên hệ: ");
         String money = ReadInfor.readNonBlank(sc, "Số tiền nợ: ");
@@ -55,6 +57,7 @@ public class MakeContact {
 
         return c;
     }
+    /** Lưu hợp đồng vào ContractStorage và DataStore. */
     public static void save(Contract c) {
         try {
             ContractStorage.saveBorrow(

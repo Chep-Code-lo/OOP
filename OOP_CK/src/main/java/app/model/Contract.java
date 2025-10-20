@@ -1,4 +1,5 @@
 package app.model;
+/** Mô tả hợp đồng vay/cho vay cùng các thông tin liên quan. */
 public class Contract {
     public enum Stats { CoNo, ChNo }
     public enum typeInterest {NONE, SIMPLE, COMPOUND}
@@ -13,6 +14,7 @@ public class Contract {
     private final typeInterest type;
     private final String note;
 
+    /** Tạo hợp đồng với thông tin vay, tự động chuyển loại lãi về NONE nếu interest <= 0. */
     public Contract(Stats stats, String name, String money, String phoneNumber,
                     String vayDate, String traDate, double interest, typeInterest type, String note){
         this.stats = stats;

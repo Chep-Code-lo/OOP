@@ -6,6 +6,7 @@ import java.util.*;
 /** Xuất CSV: Khoản vay / cho vay (đọc trực tiếp từ DataStore) */
 public final class ExportLoans {
     private ExportLoans() {}
+    /** Thu thập dữ liệu khoản vay/cho vay và ghi file CSV tương ứng. */
     public static Path export() throws Exception {
         String[] headers = {
             "ID","Trạng thái","Tên liên hệ","Số tiền","Số điện thoại",

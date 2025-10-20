@@ -6,6 +6,7 @@ import java.util.*;
 /** Xuất CSV: Giao dịch (đọc trực tiếp từ DataStore) */
 public final class ExportTransactions {
     private ExportTransactions() {}
+    /** Thu thập giao dịch từ DataStore và ghi thành file CSV giao dịch. */
     public static Path export() throws Exception {
         String[] headers = {"Ngày","Loại","Số tiền","Tài khoản","Danh mục","Ghi chú"};
         List<String[]> rows = new ArrayList<>();

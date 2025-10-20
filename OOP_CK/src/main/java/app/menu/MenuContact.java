@@ -5,9 +5,11 @@ import app.loan.MakeContact;
 import app.model.Contract;
 import java.util.Scanner;
 
+/** Menu tạo hợp đồng vay/cho vay (phân loại chủ nợ hoặc con nợ). */
 public final class MenuContact {
     private MenuContact() {}
 
+    /** Hiển thị menu tạo hợp đồng và gọi các thao tác đi kèm theo lựa chọn. */
     public static void showMenu(Scanner sc) {
         if (sc == null) throw new IllegalArgumentException("scanner");
         while (true) {

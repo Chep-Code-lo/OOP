@@ -26,6 +26,9 @@ public class TransferService {
         this.accountResolver = Objects.requireNonNull(accountResolver, "accountResolver");
     }
 
+    /**
+     * Chuyển tiền giữa 2 tài khoản: cập nhật số dư nguồn/đích và ghi cặp giao dịch TRANSFER_OUT/TRANSFER_IN.
+     */
     public void transfer(String srcId, String dstId, BigDecimal amount, Instant when, String note) {
         if (srcId == null || srcId.isBlank()) throw new IllegalArgumentException("Thiếu mã tài khoản nguồn");
         if (dstId == null || dstId.isBlank()) throw new IllegalArgumentException("Thiếu mã tài khoản đích");

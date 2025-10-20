@@ -5,6 +5,7 @@ import app.util.ConsoleUtils;
 import java.util.Objects;
 import java.util.Scanner;
 
+/** Menu tổng hợp cho các chức năng liên quan đến tài khoản tài chính. */
 public class MenuAccount {
     private final FinanceManager financeManager;
     private final Scanner scanner;
@@ -12,6 +13,7 @@ public class MenuAccount {
     private final TransferMenu transferMenu;
     private final ReportMenu reportMenu;
 
+    /** Khởi tạo menu chính với các menu con dùng chung FinanceManager và Scanner. */
     public MenuAccount(FinanceManager financeManager, Scanner scanner) {
         this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
         this.scanner = Objects.requireNonNull(scanner, "scanner");
@@ -20,6 +22,7 @@ public class MenuAccount {
         this.reportMenu = new ReportMenu(this.financeManager, this.scanner);
     }
 
+    /** Vòng lặp menu điều hướng sang quản lý tài khoản, chuyển khoản, báo cáo số dư. */
     public void showMenu() {
         while (true) {
             ConsoleUtils.clear();

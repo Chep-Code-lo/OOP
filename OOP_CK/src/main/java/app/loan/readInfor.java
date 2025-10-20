@@ -2,9 +2,11 @@ package app.loan;
 
 import java.util.Scanner;
 
+/** Tiện ích đọc dữ liệu kiểu số và chuỗi phục vụ module vay. */
 public final class ReadInfor {
     private ReadInfor() {}
 
+    /** Đọc số thực không âm từ console (cho phép dùng dấu phẩy). */
     public static double readPositiveDouble(Scanner sc, String prompt){
         while (true) {
             System.out.print(prompt);
@@ -19,6 +21,7 @@ public final class ReadInfor {
         }
     }
 
+    /** Đọc chuỗi không rỗng (loại bỏ khoảng trắng đầu/cuối). */
     public static String readNonBlank(Scanner sc, String prompt){
         while (true) {
             System.out.print(prompt);

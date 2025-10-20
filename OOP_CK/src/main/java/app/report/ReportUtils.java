@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/** Tiện ích dựng mô tả text cho tham số lọc báo cáo. */
 final class ReportUtils {
     private ReportUtils() {}
 
+    /** Diễn giải khoảng ngày thành chuỗi dễ đọc. */
     static String describeRange(DateRange range) {
         if (range == null) return "Không giới hạn";
         LocalDate start = range.start();
@@ -21,6 +23,7 @@ final class ReportUtils {
         return start + " - " + end;
     }
 
+    /** Ghép danh sách lựa chọn thành chuỗi (fallback khi rỗng). */
     static String describeSelection(List<String> selections, String fallback) {
         if (selections == null || selections.isEmpty()) {
             return fallback;

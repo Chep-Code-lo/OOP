@@ -221,6 +221,11 @@ public final class DataStore {
         return Collections.unmodifiableMap(copy);
     }
 
+    /** Tạo bản sao bất biến (giữ nguyên nội dung hiện có). */
+    private static Map<String, Object> unmodifiableCopy(Map<String, Object> row) {
+        return Collections.unmodifiableMap(new LinkedHashMap<>(row));
+    }
+
     /** Thay thế phần tử đầu tiên khớp predicate; nếu chưa có thì thêm mới (giống semantics upsert). */
     private static void replaceFirst(List<Map<String, Object>> list,
                                      Predicate<Map<String, Object>> match,

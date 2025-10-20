@@ -14,6 +14,7 @@ public class AccountActions {
     private final Scanner scanner;
     private final ConsoleMoneyReader moneyReader;
 
+    /** Tạo bộ hành động dựa trên FinanceManager và nguồn nhập liệu console. */
     public AccountActions(FinanceManager financeManager, Scanner scanner) {
         this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
         this.scanner = Objects.requireNonNull(scanner, "scanner");
@@ -132,10 +133,12 @@ public class AccountActions {
         }
     }
 
+    /** Kiểm tra sự tồn tại của tài khoản theo ID. */
     private boolean hasAccount(String id) {
         return financeManager.listAccounts().stream().anyMatch(a -> a.getId().equals(id));
     }
 
+    /** Lấy số dư hiện tại của tài khoản theo ID, mặc định 0 nếu không thấy. */
     private BigDecimal getBalanceById(String id) {
         return financeManager.listAccounts().stream()
                 .filter(a -> a.getId().equals(id))
@@ -144,6 +147,7 @@ public class AccountActions {
                 .orElse(BigDecimal.ZERO);
     }
 
+    /** Đọc ID tài khoản, cho phép người dùng hủy thao tác khi không tìm thấy. */
     private String readAccountIdOrCancel(String prompt, String role) {
         while (true) {
             System.out.print(prompt);
@@ -167,6 +171,7 @@ public class AccountActions {
         }
     }
 
+    /** Đọc số tiền chuyển và buộc không vượt quá số dư hiện tại. */
     private BigDecimal readAmountAtMost(BigDecimal max, String prompt) {
         while (true) {
             BigDecimal value = moneyReader.readAmount(prompt);

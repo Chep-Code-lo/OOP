@@ -16,12 +16,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+/** Menu thao tác giao dịch thu/chi, cung cấp các bước nhập liệu cho người dùng. */
 public class TransactionMenu {
     private final FinanceManager financeManager;
     private final TransactionService transactionService;
     private final Scanner scanner;
     private final ConsoleMoneyReader moneyReader;
 
+    /** Khởi tạo menu với lớp nghiệp vụ và tiện ích đọc tiền. */
     public TransactionMenu(FinanceManager financeManager, Scanner scanner) {
         this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
         this.scanner = Objects.requireNonNull(scanner, "scanner");
@@ -29,6 +31,7 @@ public class TransactionMenu {
         this.moneyReader = new ConsoleMoneyReader(this.scanner);
     }
 
+    /** Vòng lặp hiển thị menu giao dịch và điều phối thao tác theo lựa chọn người dùng. */
     public void showMenu() {
         while (true) {
             ConsoleUtils.clear();
@@ -76,6 +79,7 @@ public class TransactionMenu {
         }
     }
 
+    /** In số dư hiện tại của tất cả tài khoản. */
     private void showBalances() {
         ConsoleUtils.printHeader("SỐ DƯ TÀI KHOẢN");
         List<Account> accounts = new ArrayList<>(financeManager.listAccounts());
@@ -88,6 +92,7 @@ public class TransactionMenu {
                         a.getName(), a.getId(), a.getBalance().toPlainString()));
     }
 
+    /** Thu thập dữ liệu và gọi service để ghi một giao dịch mới. */
     private void addTransaction() {
         ConsoleUtils.printHeader("THÊM GIAO DỊCH");
         String accountId = chooseAccount();
@@ -107,6 +112,7 @@ public class TransactionMenu {
         System.out.println("✔ Đã ghi nhận giao dịch.");
     }
 
+    /** Liệt kê các giao dịch của một tài khoản theo thứ tự thời gian. */
     private void listTransactions() {
         ConsoleUtils.printHeader("LỊCH SỬ GIAO DỊCH");
         String accountId = chooseAccount();
@@ -127,6 +133,7 @@ public class TransactionMenu {
                 tx.getNote()));
     }
 
+    /** Cho phép chỉnh sửa giao dịch đã chọn với các trường nhập tuỳ chọn. */
     private void editTransaction() {
         ConsoleUtils.printHeader("SỬA GIAO DỊCH");
         String accountId = chooseAccount();
@@ -148,6 +155,7 @@ public class TransactionMenu {
         System.out.println("✔ Đã cập nhật giao dịch.");
     }
 
+    /** Xoá giao dịch sau khi xác định tài khoản và mã giao dịch. */
     private void deleteTransaction() {
         ConsoleUtils.printHeader("XÓA GIAO DỊCH");
         String accountId = chooseAccount();
@@ -161,6 +169,7 @@ public class TransactionMenu {
         System.out.println("✔ Đã xóa giao dịch.");
     }
 
+    /** Hiển thị danh sách tài khoản và trả về ID được chọn (hoặc null nếu huỷ). */
     private String chooseAccount() {
         List<Account> accounts = new ArrayList<>(financeManager.listAccounts());
         if (accounts.isEmpty()) {
@@ -181,6 +190,7 @@ public class TransactionMenu {
         return id;
     }
 
+    /** Đọc lựa chọn loại giao dịch (thu/chi); cho phép bỏ qua nếu optional=true. */
     private TxnType readTxnType(String prompt, boolean optional) {
         while (true) {
             System.out.print(prompt);
@@ -194,6 +204,7 @@ public class TransactionMenu {
         }
     }
 
+    /** Đọc số tiền hợp lệ; trả về null nếu người dùng bỏ qua. */
     private BigDecimal readOptionalAmount(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -211,6 +222,7 @@ public class TransactionMenu {
         }
     }
 
+    /** Đọc ngày bắt buộc theo định dạng YYYY-MM-DD. */
     private LocalDate readRequiredDate(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -223,6 +235,7 @@ public class TransactionMenu {
         }
     }
 
+    /** Đọc ngày tuỳ chọn, trả về null khi người dùng bỏ trống. */
     private LocalDate readOptionalDate(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -238,10 +251,12 @@ public class TransactionMenu {
         }
     }
 
+    /** Hỗ trợ chuyển chuỗi trống thành null để tiện truyền vào service. */
     private String blankToNull(String value) {
         return (value == null || value.isBlank()) ? null : value;
     }
 
+    /** Định dạng lại Instant thành chuỗi ngày (YYYY-MM-DD). */
     private String formatDate(Instant instant) {
         return LocalDate.ofInstant(instant, ZoneId.systemDefault()).toString();
     }

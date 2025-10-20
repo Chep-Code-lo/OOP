@@ -2,7 +2,9 @@ package app.loan;
 import java.math.BigDecimal;
 
 
+/** Chuyển đổi chuỗi thông tin hợp đồng thành dạng chuẩn để tính lãi. */
 public class ConvertDetail {
+    /** Diễn giải chuỗi loại lãi thành mô tả tiếng Việt (và kiểm tra % lãi). */
     public static String parseType(String s, double interestPercent) {
         if (interestPercent <= 0) return "không tính lãi";
         if (s == null) return "không tính lãi";
@@ -17,6 +19,7 @@ public class ConvertDetail {
         }
     }
 
+    /** Chuyển chuỗi lãi suất thành giá trị double (mặc định 0 nếu null). */
     public static double parseInterest(String s) {
         if (s == null) return 0.0;
         double r = Double.parseDouble(s);
@@ -24,6 +27,7 @@ public class ConvertDetail {
     }
 
 
+    /** Làm sạch chuỗi số tiền và chuyển về BigDecimal. */
     public static BigDecimal parseAmount(String s) {
         if (s == null || s.isBlank()) return BigDecimal.ZERO;
         String cleaned = s.trim()

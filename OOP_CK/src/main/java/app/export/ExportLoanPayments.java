@@ -20,6 +20,7 @@ import java.util.Map;
 public final class ExportLoanPayments {
     private ExportLoanPayments() {}
 
+    /** Xuất toàn bộ các báo cáo tài chính tổng hợp và trả về đường dẫn của báo cáo Thu - Chi. */
     public static Path export() throws Exception {
         // Thu/Chi theo từng chu kỳ giúp người dùng nhìn nhanh sự biến động dòng tiền
         Path incomeExpense = exportIncomeExpense();
@@ -30,6 +31,7 @@ public final class ExportLoanPayments {
         return incomeExpense;
     }
 
+    /** Xuất báo cáo Thu - Chi theo chu kỳ ngày/tháng/năm dựa vào giao dịch trong DataStore. */
     private static Path exportIncomeExpense() throws Exception {
         String[] headers = {"Chu kỳ", "Khoảng thời gian", "Thu (VND)", "Chi (VND)", "Chênh lệch"};
         Map<PeriodKey, PeriodTotals> byPeriod = new LinkedHashMap<>();
@@ -67,6 +69,7 @@ public final class ExportLoanPayments {
         return CsvExporter.writeCsv("report_income_expense.csv", headers, rows);
     }
 
+    /** Xuất danh sách hợp đồng vay/cho vay đang lưu trong DataStore. */
     private static void exportLoanSummary() throws Exception {
         String[] headers = {
                 "Mã hợp đồng", "Trạng thái", "Tên", "Số tiền (VND)",
@@ -89,6 +92,7 @@ public final class ExportLoanPayments {
         CsvExporter.writeCsv("report_loans.csv", headers, rows);
     }
 
+    /** Xuất tổng quan từng tài khoản hiện có để theo dõi số dư. */
     private static void exportAccountSummary() throws Exception {
         String[] headers = {"ID", "Tên", "Loại", "Số dư (VND)", "Ghi chú"};
         List<String[]> rows = new ArrayList<>();
@@ -104,6 +108,7 @@ public final class ExportLoanPayments {
         CsvExporter.writeCsv("report_accounts.csv", headers, rows);
     }
 
+    /** Cộng dồn số liệu thu/chi vào nhóm chu kỳ tương ứng. */
     private static void accumulate(Map<PeriodKey, PeriodTotals> map,
                                    PeriodKey key,
                                    BigDecimal amount,
@@ -116,11 +121,13 @@ public final class ExportLoanPayments {
         }
     }
 
+    /** Lấy giá trị chuỗi an toàn từ bản ghi Map. */
     private static String value(Map<String, Object> row, String key) {
         Object v = row.get(key);
         return v == null ? "" : v.toString();
     }
 
+    /** Chuyển đổi chuỗi số tiền sang BigDecimal, lỗi định dạng -> 0. */
     private static BigDecimal parseAmount(String raw) {
         if (raw == null || raw.isBlank()) return BigDecimal.ZERO;
         try {
@@ -130,6 +137,7 @@ public final class ExportLoanPayments {
         }
     }
 
+    /** Chuyển đổi chuỗi ngày sang LocalDate, lỗi định dạng -> null. */
     private static LocalDate parseDate(String raw) {
         if (raw == null || raw.isBlank()) return null;
         try {
@@ -140,12 +148,15 @@ public final class ExportLoanPayments {
     }
 
     private record PeriodKey(String label, String bucket) {
+        /** Tạo khoá nhóm theo ngày. */
         static PeriodKey daily(LocalDate date) {
             return new PeriodKey("Ngày", date.toString());
         }
+        /** Tạo khoá nhóm theo tháng (YYYY-MM). */
         static PeriodKey monthly(LocalDate date) {
             return new PeriodKey("Tháng", date.getYear() + "-" + String.format("%02d", date.getMonthValue()));
         }
+        /** Tạo khoá nhóm theo năm. */
         static PeriodKey yearly(LocalDate date) {
             return new PeriodKey("Năm", Integer.toString(date.getYear()));
         }
@@ -154,6 +165,7 @@ public final class ExportLoanPayments {
     private static final class PeriodTotals {
         private BigDecimal income = BigDecimal.ZERO;
         private BigDecimal expense = BigDecimal.ZERO;
+        /** Tính chênh lệch thu - chi. */
         private BigDecimal net() {
             return income.subtract(expense);
         }

@@ -21,6 +21,7 @@ public class InterestService {
 
     private InterestService() {}
 
+    /** Hiển thị danh sách hợp đồng và tính toán số tiền phải trả theo từng mô hình lãi. */
     public static void showMenu(Scanner sc) {
         if (sc == null) throw new IllegalArgumentException("scanner");
         try {
@@ -91,6 +92,7 @@ public class InterestService {
     }
 
 
+    /** Tính tiền phải trả với lãi đơn theo số ngày giữa hai mốc. */
     private static BigDecimal calcuMoneySimple(BigDecimal money, double interest, LocalDate borrow, LocalDate repay) {
         double r = interest / 100.0;
         int days = daysBetween(borrow, repay);
@@ -99,6 +101,7 @@ public class InterestService {
         return money.add(in);
     }
 
+    /** Tính tiền phải trả với lãi kép theo số ngày giữa hai mốc. */
     private static BigDecimal calcuMoneyCompound (BigDecimal money, double interest, LocalDate borrow, LocalDate repay){
         double r = interest / 100.0;
         int days = daysBetween(borrow, repay);
@@ -107,6 +110,7 @@ public class InterestService {
         return money.add(in);
     }
 
+    /** Đếm số ngày giữa hai mốc (âm -> 0). */
     public static int daysBetween(LocalDate a, LocalDate b) {
         return (int)Math.max(0, ChronoUnit.DAYS.between(a, b));
     }

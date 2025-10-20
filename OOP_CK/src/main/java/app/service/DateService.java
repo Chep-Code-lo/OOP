@@ -8,7 +8,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
+/** Dịch vụ nhắc nhở hạn trả hợp đồng vay. */
 public class DateService {
+    /** Hiển thị danh sách hợp đồng và tính số ngày còn lại đến hạn trả. */
     public static void Datecheck(Scanner sc) {
         if (sc == null) throw new IllegalArgumentException("scanner");
         try {

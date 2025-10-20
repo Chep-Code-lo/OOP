@@ -12,12 +12,14 @@ public class AccountMenu {
     private final AccountActions actions;
     private final Scanner scanner;
 
+    /** Khởi tạo menu với lớp nghiệp vụ và nguồn nhập liệu dùng chung. */
     public AccountMenu(FinanceManager financeManager, Scanner scanner) {
         this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
         this.scanner = Objects.requireNonNull(scanner, "scanner");
         this.actions = new AccountActions(this.financeManager, this.scanner);
     }
 
+    /** Vòng lặp hiển thị menu quản lý tài khoản và điều hướng hành động người dùng. */
     public void showMenu() {
         while (true) {
             ConsoleUtils.clear();

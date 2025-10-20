@@ -61,16 +61,19 @@ public final class TestRunner {
         System.out.println("All functional tests passed.");
     }
 
+    /** So sánh hai giá trị BigDecimal và ném AssertionError nếu khác nhau. */
     private static void requireEquals(BigDecimal actual, BigDecimal expected, String message) {
         if (actual.compareTo(expected) != 0) {
             throw new AssertionError(message + " | expected=" + expected + ", actual=" + actual);
         }
     }
 
+    /** Khẳng định điều kiện đúng; sai -> ném AssertionError. */
     private static void requireTrue(boolean condition, String message) {
         if (!condition) throw new AssertionError(message);
     }
 
+    /** Đảm bảo block ném đúng loại ngoại lệ mong đợi. */
     private static void expectThrows(Class<? extends Throwable> type, Runnable block) {
         try {
             block.run();

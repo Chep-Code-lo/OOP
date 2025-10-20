@@ -11,12 +11,14 @@ public class TransferMenu {
     private final AccountActions actions;
     private final Scanner scanner;
 
+    /** Khởi tạo menu chuyển khoản với lớp nghiệp vụ dùng chung. */
     public TransferMenu(FinanceManager financeManager, Scanner scanner) {
         this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
         this.scanner = Objects.requireNonNull(scanner, "scanner");
         this.actions = new AccountActions(this.financeManager, this.scanner);
     }
 
+    /** Giúp người dùng thực hiện hoặc thoát khỏi thao tác chuyển khoản. */
     public void showMenu() {
         while (true) {
             ConsoleUtils.clear();

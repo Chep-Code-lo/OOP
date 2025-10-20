@@ -18,6 +18,7 @@ public final class AccountCsvStorage {
     private static final Path FILE = Paths.get("data", "accounts.csv");
     private AccountCsvStorage() {}
 
+    /** Ghi toàn bộ danh sách tài khoản ra file CSV để đồng bộ dữ liệu. */
     public static synchronized void persist(List<Map<String, Object>> accounts) {
         try {
             Files.createDirectories(FILE.getParent());
@@ -44,6 +45,7 @@ public final class AccountCsvStorage {
         }
     }
 
+    /** Escape giá trị để an toàn trong CSV. */
     private static String esc(Object value) {
         String s = (value == null) ? "" : value.toString();
         if (s.contains(",") || s.contains("\"") || s.contains("\n")) {

@@ -52,23 +52,28 @@ public final class Transaction {
     public String getCategory() { return (String) data.get(KEY_CATEGORY); }
     public String getCounterpartyAccountId() { return (String) data.get(KEY_COUNTERPARTY_ID); }
 
+    /** Cập nhật loại giao dịch (thu/chi/chuyển khoản). */
     public void updateType(TxnType type) {
         if (type == null) throw new IllegalArgumentException("Thiếu loại giao dịch");
         data.put(KEY_TYPE, type);
     }
 
+    /** Cập nhật số tiền giao dịch và chuẩn hoá về 2 chữ số thập phân. */
     public void updateAmount(BigDecimal amount) {
         data.put(KEY_AMOUNT, normalizeAmount(amount));
     }
 
+    /** Cập nhật thời điểm phát sinh giao dịch. */
     public void updateOccurredAt(Instant occurredAt) {
         data.put(KEY_OCCURRED_AT, occurredAt == null ? Instant.now() : occurredAt);
     }
 
+    /** Ghi chú giao dịch (cắt khoảng trắng dư). */
     public void updateNote(String note) {
         data.put(KEY_NOTE, sanitize(note));
     }
 
+    /** Gán danh mục cho giao dịch. */
     public void updateCategory(String category) {
         data.put(KEY_CATEGORY, sanitize(category));
     }

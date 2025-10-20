@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/** Báo cáo danh sách hợp đồng vay/cho vay với các bộ lọc hạn trả và trạng thái. */
 public class LoanReport {
 
     record LoanRow(String id, String name, double amount, LocalDate dueDate, String status) {}
@@ -60,6 +61,7 @@ public class LoanReport {
         printTable(rows, outstanding);
     }
 
+    /** In bảng danh sách khoản vay ra console kèm tổng dư nợ. */
     private static void printTable(List<LoanRow> rows, double outstanding) {
         NumberFormat nf = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
         ConsoleUtils.printHeader("KHOẢN VAY");
@@ -75,7 +77,9 @@ public class LoanReport {
         System.out.println();
     }
 
+    /** Trả về chuỗi rỗng nếu null. */
     private static String safe(String s) { return s == null ? "" : s; }
+    /** Cắt ngắn chuỗi nếu dài quá giới hạn hiển thị. */
     private static String truncate(String s, int max) {
         if (s == null) return "";
         return s.length() <= max ? s : s.substring(0, max-1) + "…";

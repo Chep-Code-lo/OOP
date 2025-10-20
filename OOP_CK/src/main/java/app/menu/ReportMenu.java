@@ -13,6 +13,7 @@ public class ReportMenu {
     private final FinanceManager financeManager;
     private final Scanner scanner;
 
+    /** Khởi tạo menu báo cáo với facade tài chính và thiết bị nhập liệu dùng chung. */
     public ReportMenu(FinanceManager financeManager, Scanner scanner) {
         this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
         this.scanner = Objects.requireNonNull(scanner, "scanner");
@@ -87,6 +88,7 @@ public class ReportMenu {
         }
     }
 
+    /** In số liệu tổng hợp thu/chi/chênh lệch ra màn hình. */
     private void printSummary(Map<String, BigDecimal> report) {
         Map<String, BigDecimal> rpt = (report == null) ? Collections.emptyMap() : report;
         BigDecimal income = rpt.getOrDefault("income", BigDecimal.ZERO);

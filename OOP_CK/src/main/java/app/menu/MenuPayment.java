@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/** Menu tổng hợp cho các báo cáo tài chính (thu-chi, vay, tài khoản). */
 public class MenuPayment {
     private final Scanner scanner = new Scanner(System.in);
 
+    /** Vòng lặp hiển thị menu báo cáo và kích hoạt báo cáo tương ứng. */
     public void showMenu() {
         while (true) {
             ConsoleUtils.clear();
@@ -50,6 +52,7 @@ public class MenuPayment {
         }
     }
 
+    /** Thu thập tham số lọc và chạy báo cáo Thu - Chi. */
     private void runIncomeExpenseReport() {
         ConsoleUtils.printHeader("BÁO CÁO THU - CHI");
         DateRange range = readDateRange();
@@ -58,6 +61,7 @@ public class MenuPayment {
         IncomeExpenseReport.run(range, categories, txClass);
     }
 
+    /** Thu thập tham số lọc và chạy báo cáo Khoản vay. */
     private void runLoanReport() {
         ConsoleUtils.printHeader("BÁO CÁO KHOẢN VAY");
         DateRange range = readDateRange();
@@ -65,6 +69,7 @@ public class MenuPayment {
         LoanReport.run(range, statuses);
     }
 
+    /** Đọc khoảng ngày báo cáo, tự động mở rộng nếu người dùng bỏ trống. */
     private DateRange readDateRange() {
         LocalDate start = readDate("Từ ngày (YYYY-MM-DD, Enter để bỏ qua): ");
         LocalDate end = readDate("Đến ngày (YYYY-MM-DD, Enter để bỏ qua): ");
@@ -80,6 +85,7 @@ public class MenuPayment {
         return new DateRange(effectiveStart, effectiveEnd);
     }
 
+    /** Đọc một ngày hợp lệ theo định dạng YYYY-MM-DD, trả về null nếu bỏ trống. */
     private LocalDate readDate(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -95,6 +101,7 @@ public class MenuPayment {
         }
     }
 
+    /** Đọc danh sách giá trị dạng CSV đơn giản từ người dùng. */
     private List<String> readList(String prompt) {
         System.out.print(prompt);
         String input = scanner.nextLine().trim();

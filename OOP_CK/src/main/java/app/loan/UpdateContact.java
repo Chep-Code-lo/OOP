@@ -5,7 +5,9 @@ import app.util.ConsoleUtils;
 import java.util.List;
 import java.util.Scanner;
 
+/** Cập nhật thông tin hợp đồng vay/cho vay. */
 public class UpdateContact {
+    /** Quy trình chọn hợp đồng, nhập giá trị mới và lưu lại. */
     public static void update(Scanner sc) {
         try {
             List<ContractStorage.Contract> list = ContractStorage.loadAll();
@@ -66,6 +68,7 @@ public class UpdateContact {
         }
     }
 
+    /** Đọc một dòng input, cho phép để trống để giữ nguyên. */
     private static String prompt(Scanner sc, String label) {
         System.out.print(label);
         return sc.nextLine();

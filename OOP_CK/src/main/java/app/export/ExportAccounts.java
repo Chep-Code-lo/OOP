@@ -6,6 +6,7 @@ import java.util.*;
 /** Xuất CSV: Tài khoản (đọc trực tiếp từ DataStore) */
 public final class ExportAccounts {
     private ExportAccounts() {}
+    /** Thu thập dữ liệu tài khoản trong DataStore và ghi ra file CSV. */
     public static Path export() throws Exception {
         String[] headers = {"Mã tài khoản","Tên tài khoản","Loại tài khoản", "Số dư","Ghi chú"};
         List<String[]> rows = new ArrayList<>();

@@ -9,13 +9,16 @@ import app.util.ConsoleUtils;
 import java.util.Objects;
 import java.util.Scanner;
 
+/** Menu xuất dữ liệu ra CSV cho nhiều loại thông tin. */
 public class ExportMenu {
     private final Scanner scanner;
 
+    /** Khởi tạo menu với Scanner cung cấp từ bên ngoài (dùng chung với ứng dụng). */
     public ExportMenu(Scanner scanner) {
         this.scanner = Objects.requireNonNull(scanner, "scanner");
     }
 
+    /** Vòng lặp hiển thị các tuỳ chọn xuất CSV và thực thi hành động tương ứng. */
     public void show() {
         while (true) {
             ConsoleUtils.clear();
@@ -68,6 +71,7 @@ public class ExportMenu {
         }
     }
 
+    /** Thực thi hành động lưu và hiển thị thông tin kết quả/ lỗi. */
     private void save(Saver saver, String name) {
         try {
             int flushed = ContractStorage.flushPending();
@@ -82,5 +86,6 @@ public class ExportMenu {
     }
 
     @FunctionalInterface
+    /** Hàm chức năng đại diện cho một tác vụ lưu file CSV cụ thể. */
     interface Saver { java.nio.file.Path run() throws Exception; }
 }

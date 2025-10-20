@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/** Báo cáo phân tích thu-chi theo danh mục với nhiều bộ lọc. */
 public class IncomeExpenseReport {
 
     // Phân loại giao dịch
@@ -69,6 +70,7 @@ public class IncomeExpenseReport {
         printTable(byCategory, totalIncome, totalExpense, net);
     }
 
+    /** In bảng kết quả thu-chi ra console với thống kê tổng thu/chi/lãi. */
     private static void printTable(Map<String, Double> byCategory, double totalIncome, double totalExpense, double net) {
         NumberFormat nf = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
         ConsoleUtils.printHeader("BÁO CÁO THU - CHI");

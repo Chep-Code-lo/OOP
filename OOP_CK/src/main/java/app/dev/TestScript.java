@@ -44,6 +44,7 @@ public final class TestScript {
 
     private TestScript() {}
 
+    /** Thực thi toàn bộ kịch bản kiểm thử end-to-end cho ứng dụng console. */
     public static void main(String[] args) throws Exception {
         List<String> failed = new ArrayList<>();
         List<String> passed = new ArrayList<>();
@@ -351,6 +352,7 @@ public final class TestScript {
         }
     }
 
+    /** Chạy một bước kiểm thử, ghi lại trạng thái pass/fail và log ra console. */
     private static void runStep(String name, List<String> passed, List<String> failed, CheckedRunnable action) {
         System.out.println("\n--- " + name + " ---");
         try {
@@ -371,6 +373,7 @@ public final class TestScript {
         }
     }
 
+    /** Chạy đoạn mã với luồng input giả lập và ghi lại toàn bộ output. */
     private static void runWithInput(String text, CheckedRunnable action) throws Exception {
         InputStream originalIn = System.in;
         PrintStream originalOut = System.out;
@@ -392,6 +395,7 @@ public final class TestScript {
         originalOut.println(output.isEmpty() ? "(không có dữ liệu)" : output);
     }
 
+    /** Dọn dẹp dữ liệu test trước khi chạy kịch bản. */
     private static void cleanupEnvironment() throws IOException {
         Files.createDirectories(DATA_DIR);
         Files.deleteIfExists(ACCOUNTS_CSV);
@@ -401,6 +405,7 @@ public final class TestScript {
         DataStore.clearAll();
     }
 
+    /** Tìm ID tài khoản theo tên trong FinanceManager (ném lỗi nếu không có). */
     private static String findAccountIdByName(FinanceManager fm, String name) {
         return fm.listAccounts().stream()
                 .filter(a -> Objects.equals(a.getName(), name))
@@ -409,14 +414,17 @@ public final class TestScript {
                 .getId();
     }
 
+    /** Đảm bảo điều kiện đúng, nếu không thì ném IllegalStateException. */
     private static void ensure(boolean condition, String message) {
         if (!condition) throw new IllegalStateException(message);
     }
 
+    /** Đọc toàn bộ nội dung file nếu tồn tại, ngược lại trả về chuỗi rỗng. */
     private static String fileContent(Path path) throws IOException {
         return Files.exists(path) ? Files.readString(path) : "";
     }
 
+    /** Đảm bảo action ném đúng loại ngoại lệ (dùng cho kiểm thử). */
     private static void expectThrows(Class<? extends Throwable> type, CheckedRunnable action) throws Exception {
         try {
             action.run();
@@ -428,6 +436,7 @@ public final class TestScript {
     }
 
     @FunctionalInterface
+    /** Functional interface cho bước kiểm thử có thể ném Exception. */
     private interface CheckedRunnable {
         void run() throws Exception;
     }

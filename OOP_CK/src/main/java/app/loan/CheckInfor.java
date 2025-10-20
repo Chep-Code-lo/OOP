@@ -2,7 +2,9 @@ package app.loan;
 
 import java.util.Scanner;
 
+/** Hỗ trợ đọc lựa chọn menu trong khoảng hợp lệ. */
 public class CheckInfor {
+    /** Đọc lựa chọn số từ người dùng và đảm bảo nằm trong [min, max]. */
     public static int checkOp (Scanner sc, int min, int max){
         while(true){
             System.out.print("Bạn muốn: ");

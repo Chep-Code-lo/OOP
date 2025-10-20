@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
+/** Xoá hợp đồng vay/cho vay khỏi hồ sơ. */
 public class DeleteContact {
+    /** Quy trình chọn và xoá một hợp đồng, sau đó lưu lại CSV. */
     public static void delete(Scanner sc) {
         try {
             List<ContractStorage.Contract> list = ContractStorage.loadAll();
@@ -50,6 +52,7 @@ public class DeleteContact {
         return id;
     }
 
+    /** Hỏi xác nhận trước khi xoá. */
     private static boolean confirm(Scanner sc, String prompt) {
         System.out.print(prompt);
         String s = sc.nextLine().trim().toLowerCase();

@@ -9,13 +9,16 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 
+/** Menu điều hướng cho các tác vụ vay/cho vay và lãi suất. */
 public class MenuLoan {
     private final Scanner sc;
 
+    /** Khởi tạo menu với nguồn nhập liệu dùng chung. */
     public MenuLoan(Scanner sc) {
         this.sc = Objects.requireNonNull(sc, "scanner");
     }
 
+    /** Vòng lặp hiển thị menu vay/cho vay và gọi sang các module tương ứng. */
     public void showMenu() {
         while (true) {
             ConsoleUtils.clear();
