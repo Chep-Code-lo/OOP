@@ -21,7 +21,7 @@ public class ContractStorage {
     private static boolean dirty = false;
 
     // ====== API TẠO MỚI (giữ nguyên hành vi cũ) ======
-    /** Tạo mới một hợp đồng vay/cho vay và đồng bộ vào DataStore + CSV. */
+    /** Tạo mới một hợp đồng vay/cho vay và ghi nhận vào DataStore (sẽ lưu ra file khi người dùng chọn). */
     public static synchronized void saveBorrow(String status,
                                                String name,
                                                String money,
@@ -47,7 +47,6 @@ public class ContractStorage {
         );
         DataStore.upsertLoan(toStoreRow(entry));
         dirty = true;
-        persistCurrent();
     }
 
     // ====== Sinh ID tuần tự theo stats (giữ nguyên) ======
@@ -142,19 +141,16 @@ public class ContractStorage {
         ensureLoaded();
         return currentContracts();
     }
-    /** Đồng bộ toàn bộ danh sách vào DataStore (không ghi CSV). */
-    /** Ghi đè toàn bộ danh sách hợp đồng và đồng bộ DataStore + CSV. */
+    /** Ghi đè toàn bộ danh sách hợp đồng và đồng bộ vào DataStore, chờ người dùng lưu ra file. */
     public static synchronized void saveAll(List<Contract> list) throws IOException {
         ensureLoaded();
         DataStore.replaceLoans(list.stream()
                 .map(ContractStorage::toStoreRow)
                 .collect(Collectors.toList()));
         dirty = true;
-        persistCurrent();
     }
 
-    /** Ghi dữ liệu đang có trong DataStore ra CSV khi người dùng yêu cầu. */
-    /** Xả những hợp đồng mới/đã sửa từ bộ nhớ xuống CSV, trả về số ID mới thêm. */
+    /** Xả những hợp đồng mới/đã sửa từ bộ nhớ xuống CSV khi người dùng yêu cầu, trả về số ID mới thêm. */
     public static synchronized int flushPending() throws IOException {
         ensureLoaded();
         List<Contract> list = currentContracts();
@@ -190,7 +186,6 @@ public class ContractStorage {
                 .map(ContractStorage::toStoreRow)
                 .collect(Collectors.toList()));
         dirty = true;
-        persistCurrent();
         return true;
     }
 

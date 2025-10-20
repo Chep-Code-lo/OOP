@@ -4,7 +4,6 @@ import app.model.Account;
 import app.model.Ledger;
 import app.model.Transaction;
 import app.model.TxnType;
-import app.repository.AccountCsvStorage;
 import app.repository.DataStore;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -60,7 +59,6 @@ public class FinanceManager {
 
         accountIndex.remove(id);
         DataStore.removeAccountById(id);
-        AccountCsvStorage.persist(DataStore.accounts());
     }
 
     /** Ghi nhận khoản thu (và trả về giao dịch tương ứng) cho 1 tài khoản. */
@@ -134,7 +132,6 @@ public class FinanceManager {
         row.put(DataStore.AccountFields.NOTE, "");
         DataStore.upsertAccount(row);
         DataStore.updateTransactionsAccountName(account.getId(), account.getName());
-        AccountCsvStorage.persist(DataStore.accounts());
     }
 
     private String resolveAccountType(Account account) {
