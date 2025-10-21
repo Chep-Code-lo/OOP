@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * Đồng bộ danh sách tài khoản trong DataStore xuống file CSV để các thay đổi
+ * (thêm/sửa/xóa) được phản ánh ngay lập tức.
  */
 public final class AccountCsvStorage {
     private static final Path FILE = Paths.get("data", "accounts.csv");

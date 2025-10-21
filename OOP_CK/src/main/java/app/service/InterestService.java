@@ -11,12 +11,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Service tính lãi cho hợp đồng đọc từ ContractStorage.
- * - Hỗ trợ lãi ĐƠN (SIMPLE) và lãi KÉP (COMPOUND)
- * - Hỗ trợ cả khoản VAY (bạn phải trả) và CHO VAY (người khác trả cho bạn)
- * - Tính tại mốc bất kỳ (asOfDate) và tại ngày đến hạn (dueDate)
- */
+
 public class InterestService {
 
     private InterestService() {}
@@ -71,16 +66,16 @@ public class InterestService {
             if (realType.equalsIgnoreCase("lãi đơn")) {
                 moneyDeadline = InterestService.calcuMoneySimple(principal, interestRate, borrow, repay);
                 moneyNow = InterestService.calcuMoneySimple(principal, interestRate, borrow, now);
-                System.out.println("Số tiền phải trả khi đến hạn ("+ interestMoney.traDate +") là " + moneyDeadline + " VNĐ");
-                System.out.println("Số tiền phải trả cho đến hiện tại ("+ now +") là " + moneyNow + " VNĐ");
+                System.out.println("Số tiền phải trả khi đến hạn ("+ interestMoney.traDate +") là " + moneyDeadline.setScale(0, java.math.RoundingMode.DOWN).toPlainString() + " VNĐ");
+                System.out.println("Số tiền phải trả cho đến hiện tại ("+ now +") là " + moneyNow.setScale(0, java.math.RoundingMode.DOWN).toPlainString() + " VNĐ");
                 return;
             }
 
             if (realType.equalsIgnoreCase("lãi kép")) {
                 moneyDeadline = InterestService.calcuMoneyCompound(principal, interestRate, borrow, repay);
                 moneyNow = InterestService.calcuMoneyCompound(principal, interestRate, borrow, now);
-                System.out.println("Số tiền phải trả khi đến hạn ("+ interestMoney.traDate +") là " + moneyDeadline + " VNĐ");
-                System.out.println("Số tiền phải trả cho đến hiện tại ("+ now +") là " + moneyNow + " VNĐ");
+                System.out.println("Số tiền phải trả khi đến hạn ("+ interestMoney.traDate +") là " + moneyDeadline.setScale(0, java.math.RoundingMode.DOWN).toPlainString() + " VNĐ");
+                System.out.println("Số tiền phải trả cho đến hiện tại ("+ now +") là " + moneyNow.setScale(0, java.math.RoundingMode.DOWN).toPlainString() + " VNĐ");
                 return;
             }
 

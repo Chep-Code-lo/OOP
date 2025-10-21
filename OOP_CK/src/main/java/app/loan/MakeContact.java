@@ -12,7 +12,7 @@ public class MakeContact {
     /** Thu thập thông tin từ console để xây dựng Contract hợp lệ. */
     public static Contract Create(Scanner sc, Contract.Stats stats) {
         String name = ReadInfor.readNonBlank(sc, "Tên người liên hệ: ");
-        String money = ReadInfor.readNonBlank(sc, "Số tiền nợ: ");
+        String money = ReadInfor.readNonBlank(sc, "Số tiền vay/cho vay: ");
 
         String phone;
         while (true) {

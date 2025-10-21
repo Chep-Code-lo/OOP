@@ -10,6 +10,7 @@ public record DateRange(LocalDate start, LocalDate end) {
         return new DateRange(LocalDate.MIN, LocalDate.MAX);
     }
 
+    // ===== BỔ SUNG: Chu kỳ gộp cho báo cáo =====
     public enum Granularity { DAY, WEEK, MONTH, YEAR }
 
     public static LocalDate bucketStart(LocalDate d, Granularity g) {

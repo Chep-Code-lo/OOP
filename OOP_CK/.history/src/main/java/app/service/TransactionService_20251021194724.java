@@ -33,7 +33,9 @@ public class TransactionService {
         return new ArrayList<>(financeManager.listAccounts());
     }
 
-    /*Ghi nhận một giao dịch thu/chi mới, cập nhật số dư tài khoản tương ứng rồi lưu vào Ledger + DataStore.*/
+    /**
+     * Ghi nhận một giao dịch thu/chi mới, cập nhật số dư tài khoản tương ứng rồi lưu vào Ledger + DataStore.
+     */
     public Transaction addTransaction(String accountId,
                                       TxnType type,
                                       BigDecimal amount,
@@ -67,7 +69,9 @@ public class TransactionService {
         return entry;
     }
 
-    /* Chỉnh sửa giao dịch: điều chỉnh lại số dư theo chênh lệch rồi cập nhật cả Ledger và DataStore.*/
+    /**
+     * Chỉnh sửa giao dịch: điều chỉnh lại số dư theo chênh lệch rồi cập nhật cả Ledger và DataStore.
+     */
     public void editTransaction(String accountId,
                                 String transactionId,
                                 TxnType newType,

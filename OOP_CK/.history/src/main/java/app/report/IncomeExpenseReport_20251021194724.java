@@ -100,6 +100,8 @@ public class IncomeExpenseReport {
         runInternal(range, cats, txClass, g);
     }
 
+    /* ===================== CORE DÙNG CHUNG ===================== */
+
     private static void runInternal(DateRange range, List<String> categories, TxClass txClass,
                                     DateRange.Granularity g) {
         List<Map<String,Object>> rows = DataStore.transactions();

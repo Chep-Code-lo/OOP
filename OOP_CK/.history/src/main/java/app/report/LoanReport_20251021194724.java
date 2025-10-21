@@ -14,6 +14,7 @@ public class LoanReport {
 
     private static final Scanner SC = new Scanner(System.in);
 
+    /** PUBLIC + STATIC để nơi khác (PaymentReportSaver) dùng */
     public static class LoanRow {
         private final String id;
         private final String name;

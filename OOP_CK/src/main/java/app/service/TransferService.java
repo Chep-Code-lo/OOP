@@ -4,24 +4,29 @@ import app.model.Account;
 import app.model.Ledger;
 import app.model.Transaction;
 import app.model.TxnType;
+import app.repository.DataStore;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Xử lý chuyển khoản giữa các tài khoản (dữ liệu được truy vấn qua Stream).
- * Ghi 2 dòng giao dịch vào sổ:
+ * Xử lý chuyển khoản giữa các tài khoản.
  *  - Nguồn: TRANSFER_OUT
  *  - Đích : TRANSFER_IN
  */
 public class TransferService {
     private final Ledger ledger;
-    /** Callback để lấy Account theo id (tránh lệ thuộc cấu trúc lưu trữ cụ thể). */
+    /** Hàm lấy Account theo id (được truyền từ FinanceManager). */
     private final Function<String, Account> accountResolver;
 
-    protected TransferService(Ledger ledger, Function<String, Account> accountResolver) {
+    public TransferService(Ledger ledger, Function<String, Account> accountResolver) {
         this.ledger = Objects.requireNonNull(ledger, "ledger");
         this.accountResolver = Objects.requireNonNull(accountResolver, "accountResolver");
     }
@@ -44,24 +49,44 @@ public class TransferService {
         BigDecimal amt = amount.setScale(2, RoundingMode.HALF_UP);
         Instant ts = (when == null) ? Instant.now() : when;
 
-        src.withdraw(amt, ts); // Giảm số dư ở nguồn
-        ledger.record(Transaction.builder()
+        // 1) Rút ở nguồn + ghi TRANSFER_OUT
+        src.withdraw(amt, ts);
+        Transaction outTx = Transaction.builder()
                 .accountId(src.getId())
                 .type(TxnType.TRANSFER_OUT)
                 .amount(amt)
                 .occurredAt(ts)
                 .note(note)
                 .counterpartyAccountId(dst.getId())
-                .build());
+                .build();
+        ledger.record(outTx);
+        upsertStoreTransaction(outTx, src.getName());
 
-        dst.deposit(amt, ts); // Tăng số dư ở đích
-        ledger.record(Transaction.builder()
+        // 2) Nạp ở đích + ghi TRANSFER_IN
+        dst.deposit(amt, ts);
+        Transaction inTx = Transaction.builder()
                 .accountId(dst.getId())
                 .type(TxnType.TRANSFER_IN)
                 .amount(amt)
                 .occurredAt(ts)
                 .note(note)
                 .counterpartyAccountId(src.getId())
-                .build());
+                .build();
+        ledger.record(inTx);
+        upsertStoreTransaction(inTx, dst.getName());
+    }
+
+    private void upsertStoreTransaction(Transaction tx, String accountName) {
+        Map<String, Object> row = new LinkedHashMap<>();
+        LocalDate date = LocalDate.ofInstant(tx.getOccurredAt(), ZoneId.systemDefault());
+        row.put(DataStore.TransactionFields.ID, tx.getId());
+        row.put(DataStore.TransactionFields.DATE, date.toString());
+        row.put(DataStore.TransactionFields.TYPE, tx.getType().name());
+        row.put(DataStore.TransactionFields.AMOUNT, tx.getAmount().toPlainString());
+        row.put(DataStore.TransactionFields.ACCOUNT_ID, tx.getAccountId());
+        row.put(DataStore.TransactionFields.ACCOUNT_NAME, accountName == null ? "" : accountName);
+        row.put(DataStore.TransactionFields.CATEGORY, tx.getCategory()); // có thể null -> DataStore sẽ chuẩn hoá ""
+        row.put(DataStore.TransactionFields.NOTE, tx.getNote());
+        DataStore.upsertTransaction(row);
     }
 }
