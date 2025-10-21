@@ -211,7 +211,7 @@ public class LoanReport {
         LocalDate start = parseDateFlexible(s);
         LocalDate end   = parseDateFlexible(e);
         if (start == null || end == null) {
-            System.out.println("⚠ Ngày không hợp lệ → dùng All time.");
+            System.out.println("Cảnh báo: Ngày không hợp lệ → dùng All time.");
             return new DateRange(LocalDate.MIN, LocalDate.MAX);
         }
         return new DateRange(start, end);

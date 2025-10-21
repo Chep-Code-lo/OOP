@@ -4,6 +4,7 @@ import app.loan.DeleteContact;
 import app.loan.UpdateContact;
 import app.service.DateService;
 import app.service.InterestService;
+import app.service.FinanceManager;
 import app.util.ConsoleUtils;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -12,8 +13,10 @@ import java.util.Scanner;
 /** Menu điều hướng cho các tác vụ vay/cho vay và lãi suất. */
 public class MenuLoan {
     private final Scanner sc;
+    private final FinanceManager financeManager;
 
-    public MenuLoan(Scanner sc) {
+    public MenuLoan(FinanceManager financeManager, Scanner sc) {
+        this.financeManager = Objects.requireNonNull(financeManager, "financeManager");
         this.sc = Objects.requireNonNull(sc, "scanner");
     }
 
@@ -36,10 +39,10 @@ public class MenuLoan {
                 String choice = sc.nextLine().trim();
                 switch (choice) {
                     case "1" -> {
-                        MenuContact.showMenu(sc);
+                        MenuContact.showMenu(financeManager, sc);
                     }
                     case "2" -> {
-                        UpdateContact.update(sc);
+                        UpdateContact.update(financeManager, sc);
                         ConsoleUtils.pause(sc);
                     }
                     case "3" -> {

@@ -9,7 +9,7 @@ public final class ExportLoans {
     /** Thu thập dữ liệu khoản vay/cho vay và ghi file CSV tương ứng. */
     public static Path export() throws Exception {
         String[] headers = {
-            "ID","Trạng thái","Tên liên hệ","Số tiền","Số điện thoại",
+            "ID","Trạng thái","Tài khoản nguồn","Tên tài khoản","Tên liên hệ","Số tiền","Số điện thoại",
             "Ngày tạo hợp đồng","Hạn trả","Lãi suất","Loại lãi","Ghi chú","Thời điểm tạo"
         };
         List<String[]> rows = new ArrayList<>();
@@ -18,6 +18,8 @@ public final class ExportLoans {
             rows.add(new String[]{
                 value(l, DataStore.LoanFields.ID),
                 value(l, DataStore.LoanFields.STATUS),
+                value(l, DataStore.LoanFields.ACCOUNT_ID),
+                value(l, DataStore.LoanFields.ACCOUNT_NAME),
                 value(l, DataStore.LoanFields.NAME),
                 amount.isBlank() ? "" : amount + " VND",
                 value(l, DataStore.LoanFields.PHONE),

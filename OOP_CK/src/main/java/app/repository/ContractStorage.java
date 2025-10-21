@@ -15,7 +15,7 @@ public class ContractStorage {
     private static final Path SAVE_PATH    = Paths.get("data", "contracts.csv");
     private static final Path COUNTER_PATH = Paths.get("data", "id_counters.properties");
     private static final int  ID_WIDTH     = 4; // -> Co0001, Ch0001 (đổi 5 nếu muốn Co00001)
-    private static final String HEADER = "id/status/name/money/phone/vayDate/traDate/interest/typeInterest/note/createdAt";
+    private static final String HEADER = "id/status/accountId/accountName/name/money/phone/vayDate/traDate/interest/typeInterest/note/createdAt";
     private static final Set<String> PERSISTED_IDS = new LinkedHashSet<>();
     private static boolean initialized = false;
     private static boolean dirty = false;
@@ -23,6 +23,8 @@ public class ContractStorage {
     // ====== API TẠO MỚI (giữ nguyên hành vi cũ) ======
     /** Tạo mới một hợp đồng vay/cho vay và ghi nhận vào DataStore (sẽ lưu ra file khi người dùng chọn). */
     public static synchronized void saveBorrow(String status,
+                                               String accountId,
+                                               String accountName,
                                                String name,
                                                String money,
                                                String phone,
@@ -35,6 +37,8 @@ public class ContractStorage {
         Contract entry = new Contract(
                 nextIdForStatus(status),
                 status,
+                accountId,
+                accountName,
                 name,
                 appendCurrency(money),
                 phone,
@@ -93,6 +97,8 @@ public class ContractStorage {
     public static class Contract {
         public String id;
         public String status;
+        public String accountId;
+        public String accountName;
         public String name;
         public String money;    // định dạng hiển thị kèm hậu tố VND
         public String phone;
@@ -105,10 +111,13 @@ public class ContractStorage {
 
         public Contract() {}
 
-        public Contract(String id, String status, String name, String money, String phone,
+        public Contract(String id, String status, String accountId, String accountName,
+                        String name, String money, String phone,
                         String vayDate,String traDate, String interest, String type, String note, String createdAt) {
             this.id = id;
             this.status = status;
+            this.accountId = accountId;
+            this.accountName = accountName;
             this.name = name;
             this.money = money;
             this.phone = phone;
@@ -122,7 +131,7 @@ public class ContractStorage {
 
         public String toCsvLine() {
             return String.join("/" ,
-                    esc(id), esc(status), esc(name), esc(money), esc(phone),
+                    esc(id), esc(status), esc(accountId), esc(accountName), esc(name), esc(money), esc(phone),
                     esc(vayDate),esc(traDate), interest, esc(type), esc(note), esc(createdAt)
             );
         }
@@ -249,6 +258,8 @@ public class ContractStorage {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put(DataStore.LoanFields.ID, safe(c.id));
         row.put(DataStore.LoanFields.STATUS, safe(c.status));
+        row.put(DataStore.LoanFields.ACCOUNT_ID, safe(c.accountId));
+        row.put(DataStore.LoanFields.ACCOUNT_NAME, safe(c.accountName));
         row.put(DataStore.LoanFields.NAME, safe(c.name));
         row.put(DataStore.LoanFields.AMOUNT, normalizeAmount(c.money));
         row.put(DataStore.LoanFields.PHONE, safe(c.phone));
@@ -266,7 +277,9 @@ public class ContractStorage {
         Contract c = new Contract();
         c.id        = safeObject(row.get(DataStore.LoanFields.ID));
         c.status    = safeObject(row.get(DataStore.LoanFields.STATUS));
-        c.name      = safeObject(row.get(DataStore.LoanFields.NAME));
+        c.accountId   = safeObject(row.get(DataStore.LoanFields.ACCOUNT_ID));
+        c.accountName = safeObject(row.get(DataStore.LoanFields.ACCOUNT_NAME));
+        c.name        = safeObject(row.get(DataStore.LoanFields.NAME));
         c.money     = appendCurrency(safeObject(row.get(DataStore.LoanFields.AMOUNT)));
         c.phone     = safeObject(row.get(DataStore.LoanFields.PHONE));
         c.vayDate   = safeObject(row.get(DataStore.LoanFields.BORROW_DATE));
@@ -318,15 +331,25 @@ public class ContractStorage {
                 Contract c = new Contract();
                 c.id        = unesc(cols[0]);
                 c.status    = unesc(cols[1]);
-                c.name      = unesc(cols[2]);
-                c.money     = unesc(cols[3]);
-                c.phone     = unesc(cols[4]);
-                c.vayDate   = unesc(cols[5]);
-                c.traDate   = unesc(cols[6]);
-                c.interest  = cols[7];
-                c.type      = cols[8];
-                c.note      = unesc(cols[9]);
-                c.createdAt = unesc(cols[10]);
+
+                int idx = 2;
+                if (cols.length >= 13) {
+                    c.accountId   = unesc(cols[idx++]);
+                    c.accountName = unesc(cols[idx++]);
+                } else {
+                    // tương thích dữ liệu cũ (chưa lưu tài khoản)
+                    c.accountId = "";
+                    c.accountName = "";
+                }
+                c.name      = unesc(cols[idx++]);
+                c.money     = unesc(cols[idx++]);
+                c.phone     = unesc(cols[idx++]);
+                c.vayDate   = unesc(cols[idx++]);
+                c.traDate   = unesc(cols[idx++]);
+                c.interest  = cols[idx++];
+                c.type      = cols[idx++];
+                c.note      = unesc(cols[idx++]);
+                c.createdAt = unesc(cols[idx]);
                 list.add(c);
             }
         }

@@ -1,6 +1,8 @@
 package app.loan;
 
+import app.model.Account;
 import app.repository.ContractStorage;
+import app.service.FinanceManager;
 import app.util.ConsoleUtils;
 import java.util.List;
 import java.util.Scanner;
@@ -8,7 +10,7 @@ import java.util.Scanner;
 /** Cập nhật thông tin hợp đồng vay/cho vay. */
 public class UpdateContact {
     /** Quy trình chọn hợp đồng, nhập giá trị mới và lưu lại. */
-    public static void update(Scanner sc) {
+    public static void update(FinanceManager financeManager, Scanner sc) {
         try {
             List<ContractStorage.Contract> list = ContractStorage.loadAll();
             if (list.isEmpty()) {
@@ -21,7 +23,7 @@ public class UpdateContact {
             System.out.println("0) Quay lại menu");
             for (int i = 0; i < list.size(); i++) {
                 ContractStorage.Contract c = list.get(i);
-                System.out.printf("%d) %s - %s%n", i + 1, c.id, c.name);
+                System.out.printf("%d) %s - %s (TK: %s)%n", i + 1, c.id, c.name, c.accountName == null || c.accountName.isBlank() ? c.accountId : c.accountName);
             }
 
             int choice = CheckInfor.checkOp(sc, 0, list.size());
@@ -31,6 +33,26 @@ public class UpdateContact {
             System.out.println("(Enter để giữ nguyên giá trị cũ)");
 
             String status   = old.status;
+            String accountId = old.accountId;
+            String accountName = old.accountName;
+            if ((accountId == null || accountId.isBlank()) && financeManager.listAccounts().isEmpty()) {
+                System.out.println("Chú ý: Hợp đồng chưa gắn tài khoản. Hãy tạo tài khoản trước khi cập nhật.");
+            }
+            System.out.printf("Tài khoản hiện tại: %s (%s)%n",
+                    accountName == null || accountName.isBlank() ? "(chưa có)" : accountName,
+                    accountId == null || accountId.isBlank() ? "-" : accountId);
+            System.out.print("Đổi tài khoản? (y/N): ");
+            String changeAccount = sc.nextLine().trim();
+            if (changeAccount.equalsIgnoreCase("y") || changeAccount.equalsIgnoreCase("yes")) {
+                Account account = MakeContact.selectAccount(financeManager, sc);
+                if (account != null) {
+                    accountId = account.getId();
+                    accountName = account.getName();
+                } else {
+                    System.out.println("Giữ nguyên tài khoản cũ.");
+                }
+            }
+
             String name     = prompt(sc, "Tên [" + old.name + "]: ");
             String phone    = prompt(sc, "SĐT [" + old.phone + "]: ");
             String traDate = prompt(sc, "Ngày vay (DD/MM/YYYY) [" + old.traDate + "]: ");
@@ -56,15 +78,15 @@ public class UpdateContact {
             }
 
             ContractStorage.Contract updated = new ContractStorage.Contract(
-                    old.id, status, name, moneyStr, phone, vayDate, traDate, interestStr, type, note, old.createdAt
+                    old.id, status, accountId, accountName, name, moneyStr, phone, vayDate, traDate, interestStr, type, note, old.createdAt
             );
 
             boolean ok = ContractStorage.updateByIndex(choice, updated);
-            if (ok) System.out.println("✔ Đã cập nhật và lưu lại hợp đồng.");
-            else    System.out.println("✖ Không cập nhật được (chỉ số không hợp lệ).");
+            if (ok) System.out.println("Đã cập nhật và lưu lại hợp đồng.");
+            else    System.out.println("Không cập nhật được (chỉ số không hợp lệ).");
 
         } catch (Exception e) {
-            System.out.println("✖ Lỗi khi cập nhật: " + e.getMessage());
+            System.out.println("Lỗi khi cập nhật: " + e.getMessage());
         }
     }
 

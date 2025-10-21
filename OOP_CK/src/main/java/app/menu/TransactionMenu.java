@@ -91,7 +91,7 @@ public class TransactionMenu {
             return;
         }
         accounts.forEach(a ->
-                System.out.printf("• %s | ID=%s | Số dư=%s VND%n",
+                System.out.printf("- %s | ID=%s | Số dư=%s VND%n",
                         a.getName(), a.getId(), a.getBalance().toPlainString()));
     }
 
@@ -112,7 +112,7 @@ public class TransactionMenu {
         String note = scanner.nextLine().trim();
 
         transactionService.addTransaction(accountId, type, amount, date, category, note);
-        System.out.println("✔ Đã ghi nhận giao dịch.");
+        System.out.println("Đã ghi nhận giao dịch.");
     }
 
     /** Liệt kê các giao dịch của một tài khoản theo thứ tự thời gian. */
@@ -155,7 +155,7 @@ public class TransactionMenu {
         String newNote = blankToNull(scanner.nextLine().trim());
 
         transactionService.editTransaction(accountId, selected.getId(), newType, newAmount, newDate, newCategory, newNote);
-        System.out.println("✔ Đã cập nhật giao dịch.");
+        System.out.println("Đã cập nhật giao dịch.");
     }
 
     /** Xoá giao dịch sau khi xác định tài khoản và mã giao dịch. */
@@ -167,7 +167,7 @@ public class TransactionMenu {
         }
 
         transactionService.deleteTransaction(selected.getAccountId(), selected.getId());
-        System.out.println("✔ Đã xóa giao dịch.");
+        System.out.println("Đã xóa giao dịch.");
     }
 
     /** Hiển thị danh sách tài khoản và trả về ID được chọn (hoặc null nếu huỷ). */
@@ -178,7 +178,7 @@ public class TransactionMenu {
             return null;
         }
         accounts.forEach(a ->
-                System.out.printf("• %s | ID=%s | Số dư=%s VND%n",
+                System.out.printf("- %s | ID=%s | Số dư=%s VND%n",
                         a.getName(), a.getId(), a.getBalance().toPlainString()));
         System.out.print("Nhập ID tài khoản (hoặc Enter để hủy): ");
         String id = scanner.nextLine().trim();

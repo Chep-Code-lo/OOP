@@ -132,7 +132,7 @@ public class AccountActions {
         }
 
         financeManager.listAccounts().forEach(a ->
-                System.out.printf("• %s | ID=%s | Số dư=%s VND%n",
+                System.out.printf("- %s | ID=%s | Số dư=%s VND%n",
                         a.getName(), a.getId(), a.getBalance().toPlainString())
         );
 

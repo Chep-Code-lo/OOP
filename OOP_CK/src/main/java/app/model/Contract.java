@@ -4,6 +4,8 @@ public class Contract {
     public enum Stats { CoNo, ChNo }
     public enum typeInterest {NONE, SIMPLE, COMPOUND}
 
+    private final String accountId;
+    private final String accountName;
     private final Stats stats;
     private final String name;
     private final String money;
@@ -15,8 +17,11 @@ public class Contract {
     private final String note;
 
     /** Tạo hợp đồng với thông tin vay, tự động chuyển loại lãi về NONE nếu interest <= 0. */
-    public Contract(Stats stats, String name, String money, String phoneNumber,
+    public Contract(Stats stats, String accountId, String accountName,
+                    String name, String money, String phoneNumber,
                     String vayDate, String traDate, double interest, typeInterest type, String note){
+        this.accountId = accountId;
+        this.accountName = accountName;
         this.stats = stats;
         this.name = name;
         this.money = money;
@@ -33,6 +38,8 @@ public class Contract {
         this.note = note;
     }
 
+    public String getAccountId() { return accountId; }
+    public String getAccountName() { return accountName; }
     public Stats getStats() { return stats; }
     public String getName() { return name; }
     public String getMoney() { return money; }

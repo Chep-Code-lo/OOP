@@ -27,7 +27,7 @@ public class ReportMenu {
             return;
         }
         financeManager.listAccounts().forEach(a ->
-                System.out.printf("• %s | ID=%s | Số dư=%s VND%n",
+                System.out.printf("- %s | ID=%s | Số dư=%s VND%n",
                         a.getName(), a.getId(), a.getBalance().toPlainString())
         );
     }
@@ -57,7 +57,7 @@ public class ReportMenu {
                     }
                     case "2" -> {
                         financeManager.listAccounts().forEach(a ->
-                                System.out.printf("• %s | ID=%s%n", a.getName(), a.getId())
+                                System.out.printf("- %s | ID=%s%n", a.getName(), a.getId())
                         );
                         System.out.print("Nhập ID tài khoản: ");
                         String id = scanner.nextLine().trim();

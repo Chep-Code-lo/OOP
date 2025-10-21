@@ -1,16 +1,29 @@
 package app.loan;
 
+import app.model.Account;
 import app.model.Contract;
 import app.repository.ContractStorage;
+import app.service.FinanceManager;
 import app.util.DateUtils;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /** Tạo và lưu hợp đồng vay/cho vay mới. */
 public class MakeContact {
     
     /** Thu thập thông tin từ console để xây dựng Contract hợp lệ. */
-    public static Contract Create(Scanner sc, Contract.Stats stats) {
+    public static Contract Create(FinanceManager financeManager, Scanner sc, Contract.Stats stats) {
+        if (financeManager == null) throw new IllegalArgumentException("financeManager");
+
+        Account account = selectAccount(financeManager, sc);
+        if (account == null) {
+            System.out.println("Huỷ tạo hợp đồng.");
+            return null;
+        }
+
         String name = ReadInfor.readNonBlank(sc, "Tên người liên hệ: ");
         String money = ReadInfor.readNonBlank(sc, "Số tiền vay/cho vay: ");
 
@@ -49,9 +62,9 @@ public class MakeContact {
         String note = sc.nextLine();
         Contract c;
         if (choice == 1) {
-            c = new Contract(stats, name, money, phone, vay, due, interest, Contract.typeInterest.SIMPLE, note);
+            c = new Contract(stats, account.getId(), account.getName(), name, money, phone, vay, due, interest, Contract.typeInterest.SIMPLE, note);
         } else {
-            c = new Contract(stats, name, money, phone, vay, due, interest, Contract.typeInterest.COMPOUND, note);
+            c = new Contract(stats, account.getId(), account.getName(), name, money, phone, vay, due, interest, Contract.typeInterest.COMPOUND, note);
         }
         ValidInfor.validate(c);
 
@@ -60,8 +73,11 @@ public class MakeContact {
     /** Lưu hợp đồng vào ContractStorage và DataStore. */
     public static void save(Contract c) {
         try {
+            if (c == null) return;
             ContractStorage.saveBorrow(
                     c.getStats().name(),
+                    c.getAccountId(),
+                    c.getAccountName(),
                     c.getName(),
                     c.getMoney(),
                     c.getPhoneNumber(),
@@ -71,9 +87,29 @@ public class MakeContact {
                     c.getType().name(),
                     c.getNote()
             );
-            System.out.println("✔ Đã lưu hợp đồng.");
+            System.out.println("Đã lưu hợp đồng.");
         } catch (IOException e) {
-            System.out.println("✖ Lỗi khi lưu hợp đồng: " + e.getMessage());
+            System.out.println("Lỗi khi lưu hợp đồng: " + e.getMessage());
         }
+    }
+
+    /** Hiển thị danh sách tài khoản và cho phép người dùng chọn hoặc huỷ. */
+    static Account selectAccount(FinanceManager financeManager, Scanner sc) {
+        List<Account> accounts = new ArrayList<>(financeManager.listAccounts());
+        if (accounts.isEmpty()) {
+            System.out.println("Chưa có tài khoản tài chính nào. Hãy tạo tài khoản trước khi lập hợp đồng.");
+            return null;
+        }
+        System.out.println("Chọn tài khoản nguồn cho hợp đồng:");
+        System.out.println("0) Huỷ");
+        for (int i = 0; i < accounts.size(); i++) {
+            Account acc = accounts.get(i);
+            BigDecimal balance = acc.getBalance();
+            System.out.printf("%d) %s - %s (Số dư: %s)%n",
+                    i + 1, acc.getId(), acc.getName(), balance.toPlainString());
+        }
+        int choice = CheckInfor.checkOp(sc, 0, accounts.size());
+        if (choice == 0) return null;
+        return accounts.get(choice - 1);
     }
 }

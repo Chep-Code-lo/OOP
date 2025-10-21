@@ -13,7 +13,7 @@ public class App {
 
         MenuAccount accountMenu = new MenuAccount(financeManager, sc);
         TransactionMenu mangeMenu = new TransactionMenu(financeManager, sc);
-        MenuLoan loanMenu = new MenuLoan(sc);
+        MenuLoan loanMenu = new MenuLoan(financeManager, sc);
         MenuPayment paymentMenu = new MenuPayment();
         ExportMenu expMenu = new ExportMenu(sc);
 

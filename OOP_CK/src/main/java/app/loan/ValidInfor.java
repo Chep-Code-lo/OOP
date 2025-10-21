@@ -19,6 +19,8 @@ public class ValidInfor {
 
     /** Xác thực toàn bộ trường quan trọng của hợp đồng, ném lỗi nếu sai. */
     public static void validate(Contract c){
+        if (c.getAccountId() == null || c.getAccountId().isBlank())
+            throw new IllegalArgumentException("Phải chọn tài khoản tài chính cho hợp đồng");
         if (c.getName() == null || c.getName().isBlank())
             throw new IllegalArgumentException("Tên không được để trống");
         if (!isValidPhone10(c.getPhoneNumber()))

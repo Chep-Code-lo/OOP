@@ -111,6 +111,8 @@ public class AccountReport {
         System.out.printf("%-45s | %12s | %12s | %12s |%n",
                 "TỔNG", nf.format(Math.round(sumIncome)),
                 nf.format(Math.round(sumExpense)), nf.format(Math.round(sumIncome - sumExpense)));
+        System.out.printf("%-45s   %s%n", "Tổng số dư hiện tại (từ DataStore.accounts):",
+                nf.format(Math.round(sumBalance)));
     }
 
     /** Theo dõi 1 tài khoản theo chu kỳ (D/W/M/Y): Net = Thu - Chi theo bucket. */

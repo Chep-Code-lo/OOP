@@ -20,7 +20,10 @@ public class DeleteContact {
             ConsoleUtils.printHeader("DANH SÁCH HỢP ĐỒNG");
             for (int i = 0; i < list.size(); i++) {
                 ContractStorage.Contract c = list.get(i);
-                System.out.printf("%d) %s - %s%n", i + 1, c.id, c.name);
+                String accountDisp = (c.accountName == null || c.accountName.isBlank())
+                        ? c.accountId : c.accountName;
+                System.out.printf("%d) %s - %s (TK: %s)%n", i + 1, c.id, c.name,
+                        accountDisp == null || accountDisp.isBlank() ? "?" : accountDisp);
             }
 
             int choice = CheckInfor.checkOp(sc, 1, list.size());
@@ -35,12 +38,10 @@ public class DeleteContact {
             // Xóa và lưu lại CSV
             list.remove(choice - 1);
             ContractStorage.saveAll(list);
-            boolean ok=true;
-            if(ok) System.out.println("✔ Đã xóa và lưu lại danh sách hợp đồng.");
-            else System.out.println("Không xóa được");
+            System.out.println("Đã xóa và lưu lại danh sách hợp đồng.");
 
         } catch (IOException e) {
-            System.out.println("✖ Lỗi khi xóa: " + e.getMessage());
+            System.out.println("Lỗi khi xóa: " + e.getMessage());
         }
     }
 

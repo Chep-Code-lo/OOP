@@ -42,6 +42,8 @@ public final class DataStore {
         private LoanFields() {}
         public static final String ID = "loanId";
         public static final String STATUS = "status";
+        public static final String ACCOUNT_ID = "accountId";
+        public static final String ACCOUNT_NAME = "accountName";
         public static final String NAME = "name";
         public static final String AMOUNT = "amount";
         public static final String PHONE = "phone";
@@ -198,6 +200,8 @@ public final class DataStore {
         Map<String, Object> copy = new LinkedHashMap<>();
         copy.put(LoanFields.ID, row.getOrDefault(LoanFields.ID, ""));
         copy.put(LoanFields.STATUS, row.getOrDefault(LoanFields.STATUS, ""));
+        copy.put(LoanFields.ACCOUNT_ID, row.getOrDefault(LoanFields.ACCOUNT_ID, ""));
+        copy.put(LoanFields.ACCOUNT_NAME, row.getOrDefault(LoanFields.ACCOUNT_NAME, ""));
         copy.put(LoanFields.NAME, row.getOrDefault(LoanFields.NAME, ""));
         copy.put(LoanFields.AMOUNT, row.getOrDefault(LoanFields.AMOUNT, ""));
         copy.put(LoanFields.PHONE, row.getOrDefault(LoanFields.PHONE, ""));

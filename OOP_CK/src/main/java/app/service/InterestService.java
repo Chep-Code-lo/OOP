@@ -32,7 +32,11 @@ public class InterestService {
 
             for (int i = 0; i < list.size(); i++) {
                 ContractStorage.Contract c = list.get(i);
-                System.out.printf("%d) %s - %s%n", i + 1, c.id, c.name);
+                String accountDisp = (c.accountName == null || c.accountName.isBlank())
+                        ? c.accountId : c.accountName;
+                System.out.printf("%d) %s - %s (TK: %s)%n",
+                        i + 1, c.id, c.name,
+                        accountDisp == null || accountDisp.isBlank() ? "?" : accountDisp);
             }
 
             int choice = CheckInfor.checkOp(sc, 0, list.size());
@@ -82,7 +86,7 @@ public class InterestService {
             System.out.println("Không xác định được mô hình lãi suất, vui lòng kiểm tra lại dữ liệu.");
 
         } catch (Exception e) {
-            System.out.println("✖ Lỗi khi tính lãi: " + e.getMessage());
+            System.out.println("Lỗi khi tính lãi: " + e.getMessage());
         }
     }
 
