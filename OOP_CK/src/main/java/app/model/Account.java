@@ -3,11 +3,7 @@ import java.math.*;
 import java.time.Instant;
 import java.util.*;
 
-/**
- * Account (abstract) – một tài khoản.
- * Invariants: name != blank, balance scale = 2.
- * Dữ liệu nền được lưu bằng Map để tiện thao tác với Stream API.
- */
+
 public abstract class Account {
     protected static final String KEY_ID = "id";
     protected static final String KEY_NAME = "name";

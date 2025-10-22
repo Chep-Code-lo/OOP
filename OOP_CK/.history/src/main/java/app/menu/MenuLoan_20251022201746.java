@@ -6,7 +6,6 @@ import app.service.DateService;
 import app.service.InterestService;
 import app.service.FinanceManager;
 import app.util.ConsoleUtils;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -65,7 +64,6 @@ public class MenuLoan {
                 }
             } catch (Exception e) {
                 System.out.println("!! Lỗi: " + e.getMessage());
-                
             }
         }
     }

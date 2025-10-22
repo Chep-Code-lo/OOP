@@ -109,7 +109,7 @@ public class InterestService {
         return money.add(in);
     }
 
-    /** Đếm số ngày giữa hai mốc (âm -> 0). */
+    /** Đếm số ngày giữa hai mốc (âm sẽ thành 0). */
     public static int daysBetween(LocalDate a, LocalDate b) {
         return (int)Math.max(0, ChronoUnit.DAYS.between(a, b));
     }

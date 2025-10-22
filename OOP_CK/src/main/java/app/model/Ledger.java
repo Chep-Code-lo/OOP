@@ -3,10 +3,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Nhật ký giao dịch (in-memory).
- * Lưu dữ liệu dưới dạng List<Map<...>> để tiện thao tác bằng Stream API.
- */
 public class Ledger {
     /** Nhật ký giao dịch giữ nguyên đối tượng Transaction để tái sử dụng/hiệu chỉnh. */
     private final List<Transaction> entries = new ArrayList<>();

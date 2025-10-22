@@ -15,7 +15,7 @@ public class IncomeExpenseReport {
 
     /* ===================== API CHO MenuPayment ===================== */
 
-    /** Overload cho MenuPayment: đã có range, categories, txClass */
+
     public static void run(DateRange range, List<String> categories, TxClass txClass) {
         DateRange.Granularity g = askGranularity();
         runInternal(range, categories, txClass, g);
@@ -71,7 +71,7 @@ public class IncomeExpenseReport {
         return new ArrayList<>(set);
     }
 
-    /** Trả về danh sách danh mục duy nhất (đã sort) lấy từ DataStore. */
+
     public static List<String> availableCategories() {
         List<Map<String, Object>> rows = DataStore.transactions();
         LinkedHashSet<String> cats = new LinkedHashSet<>();
@@ -87,7 +87,7 @@ public class IncomeExpenseReport {
         return sorted;
     }
 
-    /* ===================== CHẠY TỰ DO (CLI cũ) ===================== */
+
 
     public static void run() {
         DateRange range = askDateRange();
@@ -191,7 +191,7 @@ public class IncomeExpenseReport {
         System.out.println();
     }
 
-    /* ===================== UTIL ===================== */
+
 
     private static class TxRow {
         final LocalDate date; final String category; final String type; final double amount;

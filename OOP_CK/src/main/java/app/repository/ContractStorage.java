@@ -139,7 +139,7 @@ public class ContractStorage {
 
     // Trong ContractStorage.java
 
-    /** Đọc toàn bộ hợp đồng vào bộ nhớ (kết hợp DataStore) và trả về danh sách DTO. */
+    /** Đọc toàn bộ hợp đồng vào bộ nhớ (kết hợp DataStore) và trả về danh sách. */
     public static synchronized List<Contract> loadAll() throws IOException {
         ensureLoaded();
         return currentContracts();
@@ -253,7 +253,7 @@ public class ContractStorage {
         dirty = false;
     }
 
-    /** Chuyển DTO hợp đồng sang bản ghi Map cho DataStore. */
+    /** Chuyển hợp đồng sang bản ghi Map cho DataStore. */
     private static Map<String, Object> toStoreRow(Contract c) {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put(DataStore.LoanFields.ID, safe(c.id));
@@ -306,7 +306,7 @@ public class ContractStorage {
         }
     }
 
-    /** Đọc file CSV hiện có và chuyển thành danh sách DTO. */
+    /** Đọc file CSV hiện có và chuyển thành danh sách. */
     private static List<Contract> readAllFromCsv() throws IOException {
         List<Contract> list = new ArrayList<>();
         if (!Files.exists(SAVE_PATH)) return list;
@@ -391,7 +391,7 @@ public class ContractStorage {
         return safe(value == null ? null : value.toString());
     }
 
-    // Tách CSV: tôn trọng dấu ngoặc kép, xử lý "" bên trong
+   
     /** Tách một dòng CSV với dấu phân cách '/' và hỗ trợ ngoặc kép. */
     private static String[] parseCsv(String line) {
         List<String> out = new ArrayList<>();
@@ -419,7 +419,7 @@ public class ContractStorage {
         return out.toArray(new String[0]);
     }
 
-    // Loại BOM (nếu file có BOM ở đầu)
+   
     /** Loại bỏ BOM Unicode ở đầu dòng (nếu có). */
     private static String stripBOM(String s) {
         if (s != null && !s.isEmpty() && s.charAt(0) == '\uFEFF') {
@@ -428,7 +428,7 @@ public class ContractStorage {
         return s;
     }
 
-    // Bỏ dấu " ... " và chuyển "" -> "
+   
     /** Gỡ bỏ ngoặc kép và unescape "" -> ". */
     private static String unesc(String s) {
         if (s == null) return "";

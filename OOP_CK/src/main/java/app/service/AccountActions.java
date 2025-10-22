@@ -37,7 +37,7 @@ public class AccountActions {
         }
         if (nameExists) {
             System.out.println("Lỗi: Tên tài khoản phải là duy nhất");
-            return; // quan trọng: KHÔNG tạo nữa
+            return; // Không tạo nữa khi bị trùng tên
         }
 
         try {
@@ -53,7 +53,6 @@ public class AccountActions {
 
             System.out.println("Đã thêm tài khoản.");
         } catch (Exception e) {
-            // phòng hờ nếu lớp dưới vẫn ném lỗi
             System.out.println("Lỗi: " + e.getMessage());
         }
     }

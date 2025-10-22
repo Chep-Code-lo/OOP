@@ -10,9 +10,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Đồng bộ danh sách tài khoản trong DataStore xuống file CSV để các thay đổi
- */
+
 public final class AccountCsvStorage {
     private static final Path FILE = Paths.get("data", "accounts.csv");
     private AccountCsvStorage() {}

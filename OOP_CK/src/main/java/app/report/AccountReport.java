@@ -13,11 +13,6 @@ import java.util.stream.Collectors;
  * Báo cáo theo tài khoản:
  * - Tổng hợp: Tổng THU, Tổng CHI, Lãi ròng, #giao dịch, ngày gần nhất, số dư hiện tại.
  * - Lọc: Theo khoảng ngày + theo ID/Name (contains).
- * - Nếu chỉ 1 tài khoản -> theo dõi theo chu kỳ D/W/M/Y: Net = Thu - Chi theo bucket.
- * - HỖ TRỢ CHUYỂN KHOẢN NỘI BỘ:
- *      TRANSFER_IN  => Income (tài khoản nhận)
- *      TRANSFER_OUT => Expense (tài khoản gửi)
- * - Thêm DEBUG: đếm số giao dịch đọc được, số trong khoảng ngày, liệt kê các TYPE thô đang có.
  */
 public class AccountReport {
 
@@ -32,20 +27,20 @@ public class AccountReport {
     public static void run() {
         System.out.println("============= BÁO CÁO THEO TÀI KHOẢN =============");
 
-        // 1) Lọc theo thời gian
+
         DateRange range = askDateRange();
 
-        // 2) Lọc theo tài khoản (ID hoặc tên)
+
         String accFilter = askAccountFilter();
 
-        // 3) Chu kỳ nếu cần theo dõi chi tiết 1 account
+
         DateRange.Granularity g = askGranularity();
 
-        // 4) Load dữ liệu
-        List<AccountRow> accounts = loadAccounts();
-        LoadTxResult txRes = loadTransactions(range);   // -> có debug count + typeSet
 
-        // DEBUG: in tình hình đọc giao dịch
+        List<AccountRow> accounts = loadAccounts();
+        LoadTxResult txRes = loadTransactions(range);
+
+
         System.out.println();
         System.out.println("---- DEBUG TRANSACTIONS ----");
         System.out.println("Tổng giao dịch đọc được (DataStore.transactions): " + txRes.rawCount);
@@ -54,13 +49,13 @@ public class AccountReport {
         System.out.println("-----------------------------");
         System.out.println();
 
-        // 5) Áp bộ lọc theo ID/Name (contains)
+
         List<AccountRow> filtered = filterAccounts(accounts, accFilter);
 
-        // 6) Tổng hợp theo từng account
+
         printAccountSummary(filtered, txRes.rows);
 
-        // 7) Nếu chỉ 1 account -> theo chu kỳ
+
         if (filtered.size() == 1) {
             System.out.println();
             printAccountTimeSeries(filtered.get(0), txRes.rows, g);
@@ -113,7 +108,7 @@ public class AccountReport {
                 nf.format(Math.round(sumExpense)), nf.format(Math.round(sumIncome - sumExpense)));
     }
 
-    /** Theo dõi 1 tài khoản theo chu kỳ (D/W/M/Y): Net = Thu - Chi theo bucket. */
+
     private static void printAccountTimeSeries(AccountRow acc, List<TxRow> txs, DateRange.Granularity g) {
         NumberFormat nf = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
 
@@ -160,7 +155,7 @@ public class AccountReport {
         return rows;
     }
 
-    /** Kết quả load giao dịch kèm debug */
+
     private record LoadTxResult(List<TxRow> rows, int rawCount, int inRangeCount, Set<String> rawTypes) {}
 
     private static LoadTxResult loadTransactions(DateRange range) {
@@ -168,7 +163,7 @@ public class AccountReport {
         int rawCount = (raw == null ? 0 : raw.size());
         int inRangeCount = 0;
 
-        // Thu thập type thô để debug
+
         Set<String> rawTypes = new LinkedHashSet<>();
 
         List<TxRow> list = new ArrayList<>();
@@ -196,14 +191,7 @@ public class AccountReport {
         return new LoadTxResult(list, rawCount, inRangeCount, rawTypes);
     }
 
-    /**
-     * Chuẩn hoá TYPE về "Income"/"Expense" để dễ tổng hợp:
-     * - income, in => Income
-     * - expense, ex => Expense
-     * - transfer_in / transfer-in / transfer in / transferin => Income
-     * - transfer_out / transfer-out / transfer out / transferout => Expense
-     * (bỏ hết ký tự không phải a-z để bắt nhiều biến thể)
-     */
+
     private static String normalizeTxType(String raw) {
         if (raw == null) return "";
         String s = raw.trim().toLowerCase(Locale.ROOT).replaceAll("[^a-z]", "");
@@ -217,7 +205,7 @@ public class AccountReport {
         return raw;
     }
 
-    /* =================== Hỏi đầu vào =================== */
+
 
     /** Cho nhập nhiều định dạng ngày: yyyy-MM-dd, dd-MM-yyyy, dd/MM/yyyy */
     private static DateRange askDateRange(){
@@ -252,7 +240,7 @@ public class AccountReport {
         };
     }
 
-    /* =================== Helpers =================== */
+
 
     private static List<AccountRow> filterAccounts(List<AccountRow> accounts, String keyword) {
         if (keyword == null || keyword.isBlank()) return accounts;

@@ -18,7 +18,7 @@ public class LoanReport {
         private final String id;
         private final String name;
         private final double amount;
-        private final LocalDate date;     // ngày vay (borrowDate/createdAt)
+        private final LocalDate date;     // ngày vay 
         private final LocalDate dueDate;  // hạn trả
         private final String status;
 
@@ -35,7 +35,7 @@ public class LoanReport {
         public double amount()  { return amount; }
         public LocalDate dueDate() { return dueDate; }
         public String status()  { return status; }
-        public LocalDate date() { return date; } // nội bộ
+        public LocalDate date() { return date; } 
     }
 
     /* ===== API cho MenuPayment: nhận range + danh sách trạng thái ===== */
@@ -96,7 +96,6 @@ public class LoanReport {
             }
         }
 
-        // Debug số lượng
         System.out.println("============== BÁO CÁO KHOẢN VAY/CHO VAY ==============");
         System.out.println("Nguồn: DataStore.loans()");
         System.out.println("Bản ghi đọc được: " + rawCount);
@@ -141,7 +140,7 @@ public class LoanReport {
         );
         System.out.println();
 
-        // (Nếu cần export CSV: PaymentReportSaver.saveLoanReport(range, loans, total);)
+       
         pause();
     }
 
@@ -157,7 +156,7 @@ public class LoanReport {
         } catch (Exception e){ return 0.0; }
     }
 
-    // NEW: Parse ngày "đa định dạng": yyyy-MM-dd, dd-MM-yyyy, dd/MM/yyyy
+
     private static final DateTimeFormatter ISO = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter DMY_DASH = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private static final DateTimeFormatter DMY_SLASH = DateTimeFormatter.ofPattern("dd/MM/yyyy");

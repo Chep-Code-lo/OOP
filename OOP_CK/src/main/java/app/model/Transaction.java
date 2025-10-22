@@ -4,10 +4,7 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.*;
 
-/**
- * Transaction – BẢN GHI GIAO DỊCH.
- *  - Dữ liệu được lưu trong Map để dễ thao tác bằng Stream API.
- */
+
 public final class Transaction {
     public static final String KEY_ID = "id";
     public static final String KEY_ACCOUNT_ID = "accountId";

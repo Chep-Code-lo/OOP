@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Tiện ích dựng mô tả text cho tham số lọc báo cáo. */
+/** mô tả text cho tham số lọc báo cáo. */
 final class ReportUtils {
     private ReportUtils() {}
 

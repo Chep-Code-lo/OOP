@@ -21,8 +21,6 @@ import java.util.Optional;
  *  - Ghi thu/chi
  *  - Chuyển khoản nội bộ
  *  - Cung cấp báo cáo
- *
- * Dữ liệu tài khoản được lưu trong Map (giữ nguyên thứ tự thêm) và được đồng bộ sang DataStore để phục vụ xuất báo cáo.
  */
 public class FinanceManager {
     /** Lưu tài khoản theo ID, dùng LinkedHashMap để giữ nguyên thứ tự thêm. */
